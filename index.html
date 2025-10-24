@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -65,12 +66,6 @@
             padding: 0.25rem 0.5rem;
             font-size: 0.875rem;
         }
-        .spreadsheet-section {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
         .sync-status {
             padding: 10px;
             border-radius: 5px;
@@ -85,6 +80,24 @@
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+        }
+        .sync-info {
+            background-color: #cff4fc;
+            color: #055160;
+            border: 1px solid #b6effb;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #198754;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         @media (max-width: 768px) {
             .container {
@@ -107,592 +120,551 @@
     <!-- Toast Notifikasi Container -->
     <div class="toast-container position-fixed top-0 end-0 p-3"></div>
 
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-piggy-bank me-2" viewBox="0 0 16 16">
-                    <path d="M5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm1.138-1.496A6.613 6.613 0 0 1 7.964 4.5c.666 0 1.303.097 1.893.273a.5.5 0 0 0 .286-.958A7.602 7.602 0 0 0 7.964 3.5c-.734 0-1.441.103-2.102.292a.5.5 0 1 0 .276.962z"/>
-                    <path fill-rule="evenodd" d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46A1.5 1.5 0 0 0 1.85 9.232h1.994a4.823 4.823 0 0 1-.05-.475 5.484 5.484 0 0 1 .043-2.028l.01-.041a5.18 5.18 0 0 1 .202-.793c.169-.516.436-1.048.849-1.516C4.811 2.206 6.301 1.527 7.964 1.527zm5.703 3.063A6.059 6.059 0 0 0 7.965 2.527c-1.458 0-2.732.56-3.664 1.427A4.076 4.076 0 0 0 3.436 5.57c-.097.302-.171.62-.219.947a6.462 6.462 0 0 0-.033 2.023 7.48 7.48 0 0 0 .625 2.213l.1.214-.105.307a1 1 0 0 0 .021.91l.12.226c.083.16.19.299.317.41.202.172.464.255.732.255h2.5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1.306l.13-.333a1 1 0 0 0 .01-.855l-.081-.203A5.446 5.446 0 0 1 5.45 8.73a5.507 5.507 0 0 1-.667-2.62c0-.97.232-1.89.646-2.705.207-.41.476-.78.81-1.1C6.756 3.304 7.334 3.027 7.964 3.027c.63 0 1.208.277 1.665.698.334.32.603.69.81 1.1.414.815.646 1.735.646 2.705 0 .898-.214 1.747-.595 2.507a5.478 5.478 0 0 1-1.362 1.804l-.2.162.09.217c.094.227.165.468.21.719h.857a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5H9.743a4.972 4.972 0 0 1-.22-.757 6.472 6.472 0 0 0 1.486-1.73 6.52 6.52 0 0 0 1.008-3.51 6.509 6.509 0 0 0-.315-2.095z"/>
-                    <path d="M8 12.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h2z"/>
-                </svg>
-                Fyeliaa
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#dashboard">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#input-transaksi">Input Transaksi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#riwayat">Riwayat</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#rekapan">Rekapan Tahunan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#catatan">Catatan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#spreadsheet">Spreadsheet</a>
-                    </li>
-                </ul>
+```
+<!-- Header -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-piggy-bank me-2" viewBox="0 0 16 16">
+                <path d="M5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm1.138-1.496A6.613 6.613 0 0 1 7.964 4.5c.666 0 1.303.097 1.893.273a.5.5 0 0 0 .286-.958A7.602 7.602 0 0 0 7.964 3.5c-.734 0-1.441.103-2.102.292a.5.5 0 1 0 .276.962z"/>
+                <path fill-rule="evenodd" d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46A1.5 1.5 0 0 0 1.85 9.232h1.994a4.823 4.823 0 0 1-.05-.475 5.484 5.484 0 0 1 .043-2.028l.01-.041a5.18 5.18 0 0 1 .202-.793c.169-.516.436-1.048.849-1.516C4.811 2.206 6.301 1.527 7.964 1.527zm5.703 3.063A6.059 6.059 0 0 0 7.965 2.527c-1.458 0-2.732.56-3.664 1.427A4.076 4.076 0 0 0 3.436 5.57c-.097.302-.171.62-.219.947a6.462 6.462 0 0 0-.033 2.023 7.48 7.48 0 0 0 .625 2.213l.1.214-.105.307a1 1 0 0 0 .021.91l.12.226c.083.16.19.299.317.41.202.172.464.255.732.255h2.5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1.306l.13-.333a1 1 0 0 0 .01-.855l-.081-.203A5.446 5.446 0 0 1 5.45 8.73a5.507 5.507 0 0 1-.667-2.62c0-.97.232-1.89.646-2.705.207-.41.476-.78.81-1.1C6.756 3.304 7.334 3.027 7.964 3.027c.63 0 1.208.277 1.665.698.334.32.603.69.81 1.1.414.815.646 1.735.646 2.705 0 .898-.214 1.747-.595 2.507a5.478 5.478 0 0 1-1.362 1.804l-.2.162.09.217c.094.227.165.468.21.719h.857a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5H9.743a4.972 4.972 0 0 1-.22-.757 6.472 6.472 0 0 0 1.486-1.73 6.52 6.52 0 0 0 1.008-3.51 6.509 6.509 0 0 0-.315-2.095z"/>
+                <path d="M8 12.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h2z"/>
+            </svg>
+            Fyeliaa
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#input-transaksi">Input Transaksi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#riwayat">Riwayat</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#rekapan">Rekapan Tahunan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#catatan">Catatan</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4">
+    <!-- Dashboard -->
+    <section id="dashboard" class="mb-5">
+        <h2 class="section-title text-success mb-4">Dashboard</h2>
+        
+        <div class="row">
+            <!-- Total Saldo -->
+            <div class="col-md-6 mb-4">
+                <div class="card stat-card bg-primary text-white">
+                    <div class="card-body text-center py-4">
+                        <h5 class="card-title">Total Saldo Saat Ini</h5>
+                        <h2 class="card-text fw-bold mb-2" id="total-saldo">Rp 0</h2>
+                        <p class="card-text mb-0">Tabungan bersama Alfye & Aulia</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistik Cepat -->
+            <div class="col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-success mb-3">Statistik</h5>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="p-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#198754" class="bi bi-arrow-down-circle mb-2" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                    </svg>
+                                    <h6 class="text-success">Pemasukan</h6>
+                                    <h4 id="total-pemasukan" class="text-success">Rp 0</h4>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#dc3545" class="bi bi-arrow-up-circle mb-2" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+                                    </svg>
+                                    <h6 class="text-danger">Pengeluaran</h6>
+                                    <h4 id="total-pengeluaran" class="text-danger">Rp 0</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="container py-4">
-        <!-- Dashboard -->
-        <section id="dashboard" class="mb-5">
-            <h2 class="section-title text-success mb-4">Dashboard</h2>
-            
-            <div class="row">
-                <!-- Total Saldo -->
-                <div class="col-md-6 mb-4">
-                    <div class="card stat-card bg-primary text-white">
-                        <div class="card-body text-center py-4">
-                            <h5 class="card-title">Total Saldo Saat Ini</h5>
-                            <h2 class="card-text fw-bold mb-2" id="total-saldo">Rp 0</h2>
-                            <p class="card-text mb-0">Tabungan bersama Alfye & Aulia</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Statistik Cepat -->
-                <div class="col-md-6 mb-4">
-                    <div class="card stat-card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-success mb-3">Statistik</h5>
-                            <div class="row text-center">
-                                <div class="col-6">
-                                    <div class="p-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#198754" class="bi bi-arrow-down-circle mb-2" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
-                                        </svg>
-                                        <h6 class="text-success">Pemasukan</h6>
-                                        <h4 id="total-pemasukan" class="text-success">Rp 0</h4>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="p-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#dc3545" class="bi bi-arrow-up-circle mb-2" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
-                                        </svg>
-                                        <h6 class="text-danger">Pengeluaran</h6>
-                                        <h4 id="total-pengeluaran" class="text-danger">Rp 0</h4>
-                                    </div>
-                                </div>
-                            </div>
+        <!-- Grafik -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-success mb-3">Grafik Perkembangan Tabungan</h5>
+                        <div class="chart-container">
+                            <canvas id="savings-chart" height="100"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Grafik -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title text-success mb-3">Grafik Perkembangan Tabungan</h5>
-                            <div class="chart-container">
-                                <canvas id="savings-chart" height="100"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Input Transaksi -->
-        <section id="input-transaksi" class="mb-5">
-            <h2 class="section-title text-success mb-4">Input Transaksi</h2>
-            
-            <div class="card">
-                <div class="card-body">
-                    <form id="transaction-form">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="nama" class="form-label">Nama Penyimpan/Pengambil</label>
-                                <select id="nama" class="form-select" required>
-                                    <option value="">Pilih nama</option>
-                                    <option value="Alfye">Alfye</option>
-                                    <option value="Aulia">Aulia</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="jenis" class="form-label">Jenis Transaksi</label>
-                                <select id="jenis" class="form-select" required>
-                                    <option value="">Pilih jenis</option>
-                                    <option value="masuk">Uang Masuk</option>
-                                    <option value="keluar">Uang Keluar</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="nominal" class="form-label">Nominal (Rp)</label>
-                                <input type="number" id="nominal" class="form-control" min="0" required>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="tanggal" class="form-label">Tanggal Transaksi</label>
-                                <input type="date" id="tanggal" class="form-control" required>
-                            </div>
-                            
-                            <div class="col-12 mb-3">
-                                <label for="keterangan" class="form-label">Keterangan</label>
-                                <input type="text" id="keterangan" class="form-control" placeholder="Contoh: Gaji bulanan, Bayar listrik, dll.">
-                            </div>
-                            
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-success px-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
-                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                                    </svg>
-                                    Simpan Transaksi
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- Riwayat Transaksi -->
-        <section id="riwayat" class="mb-5">
-            <h2 class="section-title text-success mb-4">Riwayat Transaksi</h2>
-            
-            <div class="card">
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-3 mb-2">
-                            <label for="filter-nama" class="form-label">Filter Nama</label>
-                            <select id="filter-nama" class="form-select">
-                                <option value="">Semua</option>
+    <!-- Input Transaksi -->
+    <section id="input-transaksi" class="mb-5">
+        <h2 class="section-title text-success mb-4">Input Transaksi</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <form id="transaction-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nama" class="form-label">Nama Penyimpan/Pengambil</label>
+                            <select id="nama" class="form-select" required>
+                                <option value="">Pilih nama</option>
                                 <option value="Alfye">Alfye</option>
                                 <option value="Aulia">Aulia</option>
                             </select>
                         </div>
                         
-                        <div class="col-md-3 mb-2">
-                            <label for="filter-jenis" class="form-label">Filter Jenis</label>
-                            <select id="filter-jenis" class="form-select">
-                                <option value="">Semua</option>
+                        <div class="col-md-6 mb-3">
+                            <label for="jenis" class="form-label">Jenis Transaksi</label>
+                            <select id="jenis" class="form-select" required>
+                                <option value="">Pilih jenis</option>
                                 <option value="masuk">Uang Masuk</option>
                                 <option value="keluar">Uang Keluar</option>
                             </select>
                         </div>
                         
-                        <div class="col-md-3 mb-2">
-                            <label for="filter-bulan" class="form-label">Filter Bulan</label>
-                            <select id="filter-bulan" class="form-select">
-                                <option value="">Semua Bulan</option>
-                                <option value="1">Januari</option>
-                                <option value="2">Februari</option>
-                                <option value="3">Maret</option>
-                                <option value="4">April</option>
-                                <option value="5">Mei</option>
-                                <option value="6">Juni</option>
-                                <option value="7">Juli</option>
-                                <option value="8">Agustus</option>
-                                <option value="9">September</option>
-                                <option value="10">Oktober</option>
-                                <option value="11">November</option>
-                                <option value="12">Desember</option>
-                            </select>
+                        <div class="col-md-6 mb-3">
+                            <label for="nominal" class="form-label">Nominal (Rp)</label>
+                            <input type="number" id="nominal" class="form-control" min="0" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="tanggal" class="form-label">Tanggal Transaksi</label>
+                            <input type="date" id="tanggal" class="form-control" required>
                         </div>
                         
-                        <div class="col-md-3 mb-2">
-                            <label for="filter-tahun" class="form-label">Filter Tahun</label>
-                            <select id="filter-tahun" class="form-select">
-                                <!-- Tahun akan diisi secara dinamis -->
-                            </select>
+                        <div class="col-12 mb-3">
+                            <label for="keterangan" class="form-label">Keterangan</label>
+                            <input type="text" id="keterangan" class="form-control" placeholder="Contoh: Gaji bulanan, Bayar listrik, dll.">
                         </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-12 d-flex justify-content-end">
-                            <button id="reset-filter" class="btn btn-outline-secondary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise me-1" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                        
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success px-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
                                 </svg>
-                                Reset Filter
+                                Simpan Transaksi
                             </button>
                         </div>
                     </div>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-success">
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>Nama</th>
-                                    <th>Jenis</th>
-                                    <th>Nominal</th>
-                                    <th>Keterangan</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transaction-list">
-                                <!-- Data transaksi akan dimuat di sini -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                </form>
             </div>
-        </section>
-
-        <!-- Rekapan Tahunan -->
-        <section id="rekapan" class="mb-5">
-            <h2 class="section-title text-success mb-4">Rekapan Tahunan</h2>
-            
-            <div class="card">
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-2">
-                            <label for="tahun-rekapan" class="form-label">Pilih Tahun</label>
-                            <select id="tahun-rekapan" class="form-select">
-                                <!-- Tahun akan diisi secara dinamis -->
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-2 d-flex align-items-end">
-                            <button id="generate-rekapan" class="btn btn-success w-100">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up me-1" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z"/>
-                                </svg>
-                                Generate Rekapan
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="rekapan-content">
-                        <!-- Rekapan akan ditampilkan di sini -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Catatan Bersama -->
-        <section id="catatan" class="mb-5">
-            <h2 class="section-title text-success mb-4">Catatan Bersama</h2>
-            
-            <div class="card">
-                <div class="card-body">
-                    <div class="mb-3 p-3 bg-light rounded">
-                        <div id="notes-content">
-                            <!-- Catatan akan ditampilkan di sini -->
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="notes-input" class="form-label">Tambah/Edit Catatan</label>
-                        <textarea id="notes-input" class="form-control" rows="4" placeholder="Tulis catatan atau rencana keuangan di sini..."></textarea>
-                    </div>
-                    
-                    <button id="save-notes" class="btn btn-success">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save me-1" viewBox="0 0 16 16">
-                            <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
-                        </svg>
-                        Simpan Catatan
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Integrasi Spreadsheet -->
-        <section id="spreadsheet" class="mb-5">
-            <h2 class="section-title text-success mb-4">Integrasi Spreadsheet</h2>
-            
-            <div class="card">
-                <div class="card-body">
-                    <div class="spreadsheet-section">
-                        <h5 class="text-success mb-3">Sinkronisasi dengan Google Spreadsheet</h5>
-                        <p class="mb-3">Sistem ini akan menyimpan data ke Google Spreadsheet untuk backup dan analisis lebih lanjut.</p>
-                        
-                        <div class="row">
-                            <div class="col-md-8 mb-3">
-                                <label for="spreadsheet-id" class="form-label">ID Spreadsheet</label>
-                                <input type="text" id="spreadsheet-id" class="form-control" value="1-JLMXPcoeFKQNiOeSUHkQNY0h0Og8hzgW4VyeRsksss" readonly>
-                                <div class="form-text">ID Spreadsheet Anda sudah terkonfigurasi otomatis</div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="sheet-name" class="form-label">Nama Sheet</label>
-                                <input type="text" id="sheet-name" class="form-control" value="Transaksi" placeholder="Nama sheet">
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <button id="save-spreadsheet-config" class="btn btn-success w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear me-1" viewBox="0 0 16 16">
-                                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-                                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
-                                    </svg>
-                                    Simpan Konfigurasi
-                                </button>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <button id="sync-spreadsheet" class="btn btn-primary w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat me-1" viewBox="0 0 16 16">
-                                        <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
-                                        <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
-                                    </svg>
-                                    Sinkronisasi Data
-                                </button>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <button id="load-from-spreadsheet" class="btn btn-info w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-1" viewBox="0 0 16 16">
-                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                    </svg>
-                                    Muat dari Spreadsheet
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="sync-status" class="sync-status" style="display: none;">
-                            <!-- Status sinkronisasi akan ditampilkan di sini -->
-                        </div>
-                        
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <div class="alert alert-info">
-                                    <h6>Status Integrasi:</h6>
-                                    <p class="mb-2">✅ Spreadsheet terhubung: <strong>Fyeliaa - Sistem Informasi Keuangan</strong></p>
-                                    <p class="mb-0">ID: <code>1-JLMXPcoeFKQNiOeSUHkQNY0h0Og8hzgW4VyeRsksss</code></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <h5 class="text-success mb-3">Struktur Spreadsheet</h5>
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="table-success">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tanggal</th>
-                                        <th>Nama</th>
-                                        <th>Jenis</th>
-                                        <th>Nominal</th>
-                                        <th>Keterangan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>123456789</td>
-                                        <td>15/03/2025</td>
-                                        <td>Alfye</td>
-                                        <td>Uang Masuk</td>
-                                        <td>1.500.000</td>
-                                        <td>Gaji bulan Maret</td>
-                                    </tr>
-                                    <tr>
-                                        <td>123456790</td>
-                                        <td>18/03/2025</td>
-                                        <td>Aulia</td>
-                                        <td>Uang Keluar</td>
-                                        <td>350.000</td>
-                                        <td>Bayar listrik</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <p class="text-muted">Data akan tersimpan dalam format yang rapi seperti contoh di atas.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-3 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2025 Fyeliaa - Sistem Informasi Keuangan Alfye & Aulia</p>
         </div>
-    </footer>
+    </section>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Riwayat Transaksi -->
+    <section id="riwayat" class="mb-5">
+        <h2 class="section-title text-success mb-4">Riwayat Transaksi</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3 mb-2">
+                        <label for="filter-nama" class="form-label">Filter Nama</label>
+                        <select id="filter-nama" class="form-select">
+                            <option value="">Semua</option>
+                            <option value="Alfye">Alfye</option>
+                            <option value="Aulia">Aulia</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-2">
+                        <label for="filter-jenis" class="form-label">Filter Jenis</label>
+                        <select id="filter-jenis" class="form-select">
+                            <option value="">Semua</option>
+                            <option value="masuk">Uang Masuk</option>
+                            <option value="keluar">Uang Keluar</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-2">
+                        <label for="filter-bulan" class="form-label">Filter Bulan</label>
+                        <select id="filter-bulan" class="form-select">
+                            <option value="">Semua Bulan</option>
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-2">
+                        <label for="filter-tahun" class="form-label">Filter Tahun</label>
+                        <select id="filter-tahun" class="form-select">
+                            <!-- Tahun akan diisi secara dinamis -->
+                        </select>
+                    </div>
+                </div>
 
-    <script>
-        // Data aplikasi
-        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-        let notes = localStorage.getItem('notes') || '';
-        let savingsChart = null;
-        let currentRekapanData = null;
-        let spreadsheetConfig = JSON.parse(localStorage.getItem('spreadsheetConfig')) || {
-            spreadsheetId: '1-JLMXPcoeFKQNiOeSUHkQNY0h0Og8hzgW4VyeRsksss',
-            sheetName: 'Transaksi'
-        };
+                <div class="row mb-3">
+                    <div class="col-12 d-flex justify-content-end">
+                        <button id="reset-filter" class="btn btn-outline-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise me-1" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                            </svg>
+                            Reset Filter
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Nama</th>
+                                <th>Jenis</th>
+                                <th>Nominal</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-list">
+                            <!-- Data transaksi akan dimuat di sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // URL Google Apps Script (Anda perlu membuat ini)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLJQh0l9_8FmY2Q0X8Q6Z5Q4eY5oXbX7Q3w5w5w5w5w5w5w5w/exec';
+    <!-- Rekapan Tahunan -->
+    <section id="rekapan" class="mb-5">
+        <h2 class="section-title text-success mb-4">Rekapan Tahunan</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-2">
+                        <label for="tahun-rekapan" class="form-label">Pilih Tahun</label>
+                        <select id="tahun-rekapan" class="form-select">
+                            <!-- Tahun akan diisi secara dinamis -->
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-2 d-flex align-items-end">
+                        <button id="generate-rekapan" class="btn btn-success w-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up me-1" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z"/>
+                            </svg>
+                            Generate Rekapan
+                        </button>
+                    </div>
+                </div>
 
-        // Elemen DOM
-        const transactionForm = document.getElementById('transaction-form');
-        const transactionList = document.getElementById('transaction-list');
-        const totalSaldoElement = document.getElementById('total-saldo');
-        const totalPemasukanElement = document.getElementById('total-pemasukan');
-        const totalPengeluaranElement = document.getElementById('total-pengeluaran');
-        const filterNama = document.getElementById('filter-nama');
-        const filterJenis = document.getElementById('filter-jenis');
-        const filterBulan = document.getElementById('filter-bulan');
-        const filterTahun = document.getElementById('filter-tahun');
-        const resetFilterButton = document.getElementById('reset-filter');
-        const tahunRekapanSelect = document.getElementById('tahun-rekapan');
-        const generateRekapanButton = document.getElementById('generate-rekapan');
-        const rekapanContent = document.getElementById('rekapan-content');
-        const notesContent = document.getElementById('notes-content');
-        const notesInput = document.getElementById('notes-input');
-        const saveNotesButton = document.getElementById('save-notes');
-        const tanggalInput = document.getElementById('tanggal');
-        const spreadsheetIdInput = document.getElementById('spreadsheet-id');
-        const sheetNameInput = document.getElementById('sheet-name');
-        const saveSpreadsheetConfigButton = document.getElementById('save-spreadsheet-config');
-        const syncSpreadsheetButton = document.getElementById('sync-spreadsheet');
-        const loadFromSpreadsheetButton = document.getElementById('load-from-spreadsheet');
-        const syncStatus = document.getElementById('sync-status');
+                <div id="rekapan-content">
+                    <!-- Rekapan akan ditampilkan di sini -->
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // Inisialisasi
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set tanggal default ke hari ini
-            tanggalInput.value = new Date().toISOString().split('T')[0];
-            
-            renderTransactions();
-            updateBalance();
-            loadNotes();
-            initChart();
-            populateYearFilters();
-            loadSpreadsheetConfig();
-            
-            // Event listeners
-            transactionForm.addEventListener('submit', addTransaction);
-            filterNama.addEventListener('change', filterTransactions);
-            filterJenis.addEventListener('change', filterTransactions);
-            filterBulan.addEventListener('change', filterTransactions);
-            filterTahun.addEventListener('change', filterTransactions);
-            resetFilterButton.addEventListener('click', resetFilters);
-            generateRekapanButton.addEventListener('click', generateRekapan);
-            saveNotesButton.addEventListener('click', saveNotes);
-            saveSpreadsheetConfigButton.addEventListener('click', saveSpreadsheetConfig);
-            syncSpreadsheetButton.addEventListener('click', syncToSpreadsheet);
-            loadFromSpreadsheetButton.addEventListener('click', loadFromSpreadsheet);
+    <!-- Catatan Bersama -->
+    <section id="catatan" class="mb-5">
+        <h2 class="section-title text-success mb-4">Catatan Bersama</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>📝 Catatan Bersama:</strong> Catatan ini dapat dilihat dan diedit oleh semua pengguna Fyeliaa (Alfye & Aulia).
+                </div>
+                
+                <div class="mb-3 p-3 bg-light rounded">
+                    <div id="notes-content">
+                        <div class="text-center py-3">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-2 mb-0">Memuat catatan...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="notes-input" class="form-label">Tambah/Edit Catatan</label>
+                    <textarea id="notes-input" class="form-control" rows="4" placeholder="Tulis catatan atau rencana keuangan di sini..."></textarea>
+                </div>
+                
+                <button id="save-notes" class="btn btn-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save me-1" viewBox="0 0 16 16">
+                        <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
+                    </svg>
+                    Simpan Catatan
+                </button>
+            </div>
+        </div>
+    </section>
+</div>
 
-            // Smooth scroll untuk navigasi
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        // Tutup navbar collapse di mobile setelah klik
-                        const navbarCollapse = document.querySelector('.navbar-collapse');
-                        if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-                            const bsCollapse = new bootstrap.Collapse(navbarCollapse);
-                            bsCollapse.hide();
-                        }
-                        
-                        // Smooth scroll ke target
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+<!-- Footer -->
+<footer class="bg-dark text-white py-3 mt-5">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2025 Fyeliaa - Sistem Informasi Keuangan Alfye & Aulia</p>
+        <p class="mb-0 small mt-1">💾 Data tersimpan secara terpusat dan dapat diakses oleh semua pengguna</p>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Data aplikasi
+    let transactions = [];
+    let notes = '';
+    let savingsChart = null;
+    let isLoading = false;
+
+    // Elemen DOM
+    const transactionForm = document.getElementById('transaction-form');
+    const transactionList = document.getElementById('transaction-list');
+    const totalSaldoElement = document.getElementById('total-saldo');
+    const totalPemasukanElement = document.getElementById('total-pemasukan');
+    const totalPengeluaranElement = document.getElementById('total-pengeluaran');
+    const filterNama = document.getElementById('filter-nama');
+    const filterJenis = document.getElementById('filter-jenis');
+    const filterBulan = document.getElementById('filter-bulan');
+    const filterTahun = document.getElementById('filter-tahun');
+    const resetFilterButton = document.getElementById('reset-filter');
+    const tahunRekapanSelect = document.getElementById('tahun-rekapan');
+    const generateRekapanButton = document.getElementById('generate-rekapan');
+    const rekapanContent = document.getElementById('rekapan-content');
+    const notesContent = document.getElementById('notes-content');
+    const notesInput = document.getElementById('notes-input');
+    const saveNotesButton = document.getElementById('save-notes');
+    const tanggalInput = document.getElementById('tanggal');
+
+    // Inisialisasi
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Set tanggal default ke hari ini
+        tanggalInput.value = new Date().toISOString().split('T')[0];
+        
+        // Load data dari storage
+        await loadAllData();
+        
+        // Event listeners
+        transactionForm.addEventListener('submit', addTransaction);
+        filterNama.addEventListener('change', filterTransactions);
+        filterJenis.addEventListener('change', filterTransactions);
+        filterBulan.addEventListener('change', filterTransactions);
+        filterTahun.addEventListener('change', filterTransactions);
+        resetFilterButton.addEventListener('click', resetFilters);
+        generateRekapanButton.addEventListener('click', generateRekapan);
+        saveNotesButton.addEventListener('click', saveNotes);
+
+        // Smooth scroll untuk navigasi
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Tutup navbar collapse di mobile setelah klik
+                    const navbarCollapse = document.querySelector('.navbar-collapse');
+                    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                        const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+                        bsCollapse.hide();
                     }
-                });
+                    
+                    // Smooth scroll ke target
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
-
-            // Tampilkan notifikasi selamat datang
-            showNotification('Selamat datang di Fyeliaa! 💰', 'success');
         });
 
-        // Fungsi untuk menampilkan notifikasi
-        function showNotification(message, type = 'info') {
-            const toastContainer = document.querySelector('.toast-container');
+        // Tampilkan notifikasi selamat datang
+        showNotification('Selamat datang di Fyeliaa! 💰', 'success');
+    });
+
+    // Fungsi untuk memuat semua data
+    async function loadAllData() {
+        try {
+            isLoading = true;
             
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-white bg-${getBootstrapColor(type)} border-0 fade-in`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
+            // Load transaksi
+            await loadTransactions();
             
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            // Load catatan
+            await loadNotes();
+            
+            // Update UI
+            renderTransactions();
+            updateBalance();
+            initChart();
+            populateYearFilters();
+            
+            isLoading = false;
+        } catch (error) {
+            console.error('Error loading data:', error);
+            showNotification('Gagal memuat data. Menggunakan data lokal.', 'warning');
+            isLoading = false;
+        }
+    }
+
+    // Fungsi untuk memuat transaksi dari storage
+    async function loadTransactions() {
+        try {
+            const result = await window.storage.list('transaction:', true);
+            
+            if (result && result.keys && result.keys.length > 0) {
+                transactions = [];
+                
+                for (const key of result.keys) {
+                    try {
+                        const data = await window.storage.get(key, true);
+                        if (data && data.value) {
+                            const transaction = JSON.parse(data.value);
+                            transactions.push(transaction);
+                        }
+                    } catch (error) {
+                        console.error(`Error loading transaction ${key}:`, error);
+                    }
+                }
+                
+                // Urutkan berdasarkan tanggal
+                transactions.sort((a, b) => new Date(b.tanggalAsli) - new Date(a.tanggalAsli));
+            }
+        } catch (error) {
+            console.error('Error loading transactions:', error);
+        }
+    }
+
+    // Fungsi untuk menyimpan transaksi ke storage
+    async function saveTransaction(transaction) {
+        try {
+            const key = `transaction:${transaction.id}`;
+            await window.storage.set(key, JSON.stringify(transaction), true);
+            return true;
+        } catch (error) {
+            console.error('Error saving transaction:', error);
+            showNotification('Gagal menyimpan transaksi ke server!', 'error');
+            return false;
+        }
+    }
+
+    // Fungsi untuk menghapus transaksi dari storage
+    async function deleteTransactionFromStorage(id) {
+        try {
+            const key = `transaction:${id}`;
+            await window.storage.delete(key, true);
+            return true;
+        } catch (error) {
+            console.error('Error deleting transaction:', error);
+            showNotification('Gagal menghapus transaksi dari server!', 'error');
+            return false;
+        }
+    }
+
+    // Fungsi untuk menampilkan notifikasi
+    function showNotification(message, type = 'info') {
+        const toastContainer = document.querySelector('.toast-container');
+        
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${getBootstrapColor(type)} border-0 fade-in`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
                 </div>
-            `;
-            
-            toastContainer.appendChild(toast);
-            
-            const bsToast = new bootstrap.Toast(toast, {
-                autohide: true,
-                delay: 4000
-            });
-            
-            bsToast.show();
-            
-            // Hapus toast dari DOM setelah disembunyikan
-            toast.addEventListener('hidden.bs.toast', () => {
-                toast.remove();
-            });
-        }
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        const bsToast = new bootstrap.Toast(toast, {
+            autohide: true,
+            delay: 4000
+        });
+        
+        bsToast.show();
+        
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
 
-        // Fungsi untuk mendapatkan warna Bootstrap berdasarkan type
-        function getBootstrapColor(type) {
-            const colors = {
-                'success': 'success',
-                'error': 'danger',
-                'warning': 'warning',
-                'info': 'info',
-                'primary': 'primary'
-            };
-            return colors[type] || 'info';
-        }
+    function getBootstrapColor(type) {
+        const colors = {
+            'success': 'success',
+            'error': 'danger',
+            'warning': 'warning',
+            'info': 'info',
+            'primary': 'primary'
+        };
+        return colors[type] || 'info';
+    }
 
-        // Fungsi untuk menambah transaksi
-        function addTransaction(e) {
-            e.preventDefault();
-            
-            const nama = document.getElementById('nama').value;
-            const jenis = document.getElementById('jenis').value;
-            const nominal = parseInt(document.getElementById('nominal').value);
-            const keterangan = document.getElementById('keterangan').value;
-            const tanggal = document.getElementById('tanggal').value;
-            
-            if (!nama || !jenis || !nominal || !tanggal) {
-                showNotification('Harap isi semua field yang diperlukan!', 'warning');
-                return;
-            }
-            
-            if (nominal <= 0) {
-                showNotification('Nominal harus lebih dari 0!', 'warning');
-                return;
-            }
-            
-            const transaction = {
-                id: Date.now(),
-                tanggal: formatDateForDisplay(tanggal),
-                tanggalAsli: tanggal,
-                nama,
-                jenis,
-                nominal,
-                keterangan
-            };
-            
+    // Fungsi untuk menambah transaksi
+    async function addTransaction(e) {
+        e.preventDefault();
+        
+        const nama = document.getElementById('nama').value;
+        const jenis = document.getElementById('jenis').value;
+        const nominal = parseInt(document.getElementById('nominal').value);
+        const keterangan = document.getElementById('keterangan').value;
+        const tanggal = document.getElementById('tanggal').value;
+        
+        if (!nama || !jenis || !nominal || !tanggal) {
+            showNotification('Harap isi semua field yang diperlukan!', 'warning');
+            return;
+        }
+        
+        if (nominal <= 0) {
+            showNotification('Nominal harus lebih dari 0!', 'warning');
+            return;
+        }
+        
+        const transaction = {
+            id: Date.now(),
+            tanggal: formatDateForDisplay(tanggal),
+            tanggalAsli: tanggal,
+            nama,
+            jenis,
+            nominal,
+            keterangan
+        };
+        
+        // Simpan ke storage
+        const saved = await saveTransaction(transaction);
+        
+        if (saved) {
             transactions.push(transaction);
-            saveToLocalStorage();
             renderTransactions();
             updateBalance();
             updateChart();
@@ -702,18 +674,20 @@
             transactionForm.reset();
             tanggalInput.value = new Date().toISOString().split('T')[0];
             
-            // Tampilkan notifikasi sukses
             const action = jenis === 'masuk' ? 'ditambahkan' : 'dikeluarkan';
             showNotification(`Transaksi ${action} sebesar ${formatCurrency(nominal)} berhasil disimpan! ✅`, 'success');
         }
+    }
 
-        // Fungsi untuk menghapus transaksi
-        function deleteTransaction(id) {
-            const transaction = transactions.find(t => t.id === id);
+    // Fungsi untuk menghapus transaksi
+    async function deleteTransaction(id) {
+        const transaction = transactions.find(t => t.id === id);
+        
+        if (transaction && confirm(`Apakah Anda yakin ingin menghapus transaksi ini?\n${transaction.tanggal} - ${transaction.nama} - ${formatCurrency(transaction.nominal)}`)) {
+            const deleted = await deleteTransactionFromStorage(id);
             
-            if (transaction && confirm(`Apakah Anda yakin ingin menghapus transaksi ini?\n${transaction.tanggal} - ${transaction.nama} - ${formatCurrency(transaction.nominal)}`)) {
-                transactions = transactions.filter(transaction => transaction.id !== id);
-                saveToLocalStorage();
+            if (deleted) {
+                transactions = transactions.filter(t => t.id !== id);
                 renderTransactions();
                 updateBalance();
                 updateChart();
@@ -721,574 +695,392 @@
                 showNotification('Transaksi berhasil dihapus! 🗑️', 'success');
             }
         }
+    }
 
-        // Fungsi untuk merender daftar transaksi
-        function renderTransactions(filteredTransactions = null) {
-            const transactionsToRender = filteredTransactions || transactions;
-            
-            transactionList.innerHTML = '';
-            
-            if (transactionsToRender.length === 0) {
-                transactionList.innerHTML = '<tr><td colspan="6" class="text-center py-4">Tidak ada transaksi</td></tr>';
-                return;
-            }
-            
-            // Urutkan transaksi berdasarkan tanggal (terbaru di atas)
-            const sortedTransactions = [...transactionsToRender].sort((a, b) => 
-                new Date(b.tanggalAsli) - new Date(a.tanggalAsli)
-            );
-            
-            sortedTransactions.forEach(transaction => {
-                const row = document.createElement('tr');
-                row.className = `transaction-item ${transaction.jenis === 'masuk' ? 'transaction-income' : 'transaction-expense'}`;
-                
-                const nominalClass = transaction.jenis === 'masuk' ? 'text-success' : 'text-danger';
-                const nominalPrefix = transaction.jenis === 'masuk' ? '+' : '-';
-                const jenisText = transaction.jenis === 'masuk' ? 'Uang Masuk' : 'Uang Keluar';
-                const jenisIcon = transaction.jenis === 'masuk' ? 
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#198754" class="bi bi-arrow-down-circle me-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>' :
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#dc3545" class="bi bi-arrow-up-circle me-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/></svg>';
-                
-                row.innerHTML = `
-                    <td>${transaction.tanggal}</td>
-                    <td>${transaction.nama}</td>
-                    <td>${jenisIcon} ${jenisText}</td>
-                    <td class="${nominalClass} fw-bold">${nominalPrefix} ${formatCurrency(transaction.nominal)}</td>
-                    <td>${transaction.keterangan || '-'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteTransaction(${transaction.id})">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                            </svg>
-                        </button>
-                    </td>
-                `;
-                
-                transactionList.appendChild(row);
-            });
+    // Fungsi untuk merender daftar transaksi
+    function renderTransactions(filteredTransactions = null) {
+        const transactionsToRender = filteredTransactions || transactions;
+        
+        transactionList.innerHTML = '';
+        
+        if (transactionsToRender.length === 0) {
+            transactionList.innerHTML = '<tr><td colspan="6" class="text-center py-4">Tidak ada transaksi</td></tr>';
+            return;
         }
-
-        // Fungsi untuk memperbarui saldo dan statistik
-        function updateBalance() {
-            let totalSaldo = 0;
-            let totalPemasukan = 0;
-            let totalPengeluaran = 0;
+        
+        const sortedTransactions = [...transactionsToRender].sort((a, b) => 
+            new Date(b.tanggalAsli) - new Date(a.tanggalAsli)
+        );
+        
+        sortedTransactions.forEach(transaction => {
+            const row = document.createElement('tr');
+            row.className = `transaction-item ${transaction.jenis === 'masuk' ? 'transaction-income' : 'transaction-expense'}`;
             
-            transactions.forEach(transaction => {
-                if (transaction.jenis === 'masuk') {
-                    totalSaldo += transaction.nominal;
-                    totalPemasukan += transaction.nominal;
-                } else {
-                    totalSaldo -= transaction.nominal;
-                    totalPengeluaran += transaction.nominal;
-                }
-            });
+            const nominalClass = transaction.jenis === 'masuk' ? 'text-success' : 'text-danger';
+            const nominalPrefix = transaction.jenis === 'masuk' ? '+' : '-';
+            const jenisText = transaction.jenis === 'masuk' ? 'Uang Masuk' : 'Uang Keluar';
+            const jenisIcon = transaction.jenis === 'masuk' ? 
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#198754" class="bi bi-arrow-down-circle me-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>' :
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#dc3545" class="bi bi-arrow-up-circle me-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/></svg>';
             
-            totalSaldoElement.textContent = formatCurrency(totalSaldo);
-            totalPemasukanElement.textContent = formatCurrency(totalPemasukan);
-            totalPengeluaranElement.textContent = formatCurrency(totalPengeluaran);
-        }
-
-        // Fungsi untuk memfilter transaksi
-        function filterTransactions() {
-            const namaFilter = filterNama.value;
-            const jenisFilter = filterJenis.value;
-            const bulanFilter = filterBulan.value;
-            const tahunFilter = filterTahun.value;
-            
-            let filteredTransactions = transactions;
-            
-            if (namaFilter) {
-                filteredTransactions = filteredTransactions.filter(transaction => transaction.nama === namaFilter);
-            }
-            
-            if (jenisFilter) {
-                filteredTransactions = filteredTransactions.filter(transaction => transaction.jenis === jenisFilter);
-            }
-            
-            if (bulanFilter) {
-                filteredTransactions = filteredTransactions.filter(transaction => {
-                    const transactionMonth = new Date(transaction.tanggalAsli).getMonth() + 1;
-                    return transactionMonth.toString() === bulanFilter;
-                });
-            }
-            
-            if (tahunFilter) {
-                filteredTransactions = filteredTransactions.filter(transaction => {
-                    const transactionYear = new Date(transaction.tanggalAsli).getFullYear();
-                    return transactionYear.toString() === tahunFilter;
-                });
-            }
-            
-            renderTransactions(filteredTransactions);
-            
-            // Tampilkan notifikasi filter
-            if (namaFilter || jenisFilter || bulanFilter || tahunFilter) {
-                showNotification('Filter diterapkan! 🔍', 'info');
-            }
-        }
-
-        // Fungsi untuk mereset filter
-        function resetFilters() {
-            filterNama.value = '';
-            filterJenis.value = '';
-            filterBulan.value = '';
-            filterTahun.value = '';
-            renderTransactions();
-            showNotification('Filter berhasil direset! 🔄', 'info');
-        }
-
-        // Fungsi untuk mengisi filter tahun
-        function populateYearFilters() {
-            const years = new Set();
-            transactions.forEach(transaction => {
-                const year = new Date(transaction.tanggalAsli).getFullYear();
-                years.add(year);
-            });
-            
-            // Tambahkan tahun saat ini jika belum ada
-            const currentYear = new Date().getFullYear();
-            years.add(currentYear);
-            
-            // Urutkan tahun
-            const sortedYears = Array.from(years).sort((a, b) => b - a);
-            
-            // Isi filter tahun
-            filterTahun.innerHTML = '<option value="">Semua Tahun</option>';
-            tahunRekapanSelect.innerHTML = '';
-            
-            sortedYears.forEach(year => {
-                filterTahun.innerHTML += `<option value="${year}">${year}</option>`;
-                tahunRekapanSelect.innerHTML += `<option value="${year}">${year}</option>`;
-            });
-            
-            // Set tahun saat ini sebagai default di rekapan
-            tahunRekapanSelect.value = currentYear;
-        }
-
-        // Fungsi untuk generate rekapan tahunan
-        function generateRekapan() {
-            const selectedYear = parseInt(tahunRekapanSelect.value);
-            
-            // Data untuk setiap bulan
-            const monthlyData = {};
-            for (let month = 1; month <= 12; month++) {
-                monthlyData[month] = {
-                    pemasukan: 0,
-                    pengeluaran: 0,
-                    saldo: 0
-                };
-            }
-            
-            // Proses transaksi untuk tahun yang dipilih
-            transactions.forEach(transaction => {
-                const transactionDate = new Date(transaction.tanggalAsli);
-                const transactionYear = transactionDate.getFullYear();
-                const transactionMonth = transactionDate.getMonth() + 1;
-                
-                if (transactionYear === selectedYear) {
-                    if (transaction.jenis === 'masuk') {
-                        monthlyData[transactionMonth].pemasukan += transaction.nominal;
-                        monthlyData[transactionMonth].saldo += transaction.nominal;
-                    } else {
-                        monthlyData[transactionMonth].pengeluaran += transaction.nominal;
-                        monthlyData[transactionMonth].saldo -= transaction.nominal;
-                    }
-                }
-            });
-            
-            // Hitung total tahunan
-            let totalPemasukanTahunan = 0;
-            let totalPengeluaranTahunan = 0;
-            let totalSaldoTahunan = 0;
-            
-            Object.values(monthlyData).forEach(month => {
-                totalPemasukanTahunan += month.pemasukan;
-                totalPengeluaranTahunan += month.pengeluaran;
-                totalSaldoTahunan += month.saldo;
-            });
-            
-            // Simpan data rekapan untuk export
-            currentRekapanData = {
-                tahun: selectedYear,
-                monthlyData: monthlyData,
-                totalPemasukanTahunan: totalPemasukanTahunan,
-                totalPengeluaranTahunan: totalPengeluaranTahunan,
-                totalSaldoTahunan: totalSaldoTahunan
-            };
-            
-            // Tampilkan rekapan
-            let rekapanHTML = `
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
-                        <thead class="table-success">
-                            <tr>
-                                <th>Bulan</th>
-                                <th>Pemasukan</th>
-                                <th>Pengeluaran</th>
-                                <th>Saldo Bulanan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            row.innerHTML = `
+                <td>${transaction.tanggal}</td>
+                <td>${transaction.nama}</td>
+                <td>${jenisIcon} ${jenisText}</td>
+                <td class="${nominalClass} fw-bold">${nominalPrefix} ${formatCurrency(transaction.nominal)}</td>
+                <td>${transaction.keterangan || '-'}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteTransaction(${transaction.id})">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                        </svg>
+                    </button>
+                </td>
             `;
             
-            const monthNames = [
-                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-            ];
-            
-            for (let month = 1; month <= 12; month++) {
-                const data = monthlyData[month];
-                const saldoClass = data.saldo >= 0 ? 'text-success' : 'text-danger';
-                
-                rekapanHTML += `
-                    <tr>
-                        <td><strong>${monthNames[month-1]}</strong></td>
-                        <td class="text-success">${formatCurrency(data.pemasukan)}</td>
-                        <td class="text-danger">${formatCurrency(data.pengeluaran)}</td>
-                        <td class="${saldoClass} fw-bold">${formatCurrency(data.saldo)}</td>
-                    </tr>
-                `;
+            transactionList.appendChild(row);
+        });
+    }
+
+    // Fungsi untuk memperbarui saldo dan statistik
+    function updateBalance() {
+        let totalSaldo = 0;
+        let totalPemasukan = 0;
+        let totalPengeluaran = 0;
+        
+        transactions.forEach(transaction => {
+            if (transaction.jenis === 'masuk') {
+                totalSaldo += transaction.nominal;
+                totalPemasukan += transaction.nominal;
+            } else {
+                totalSaldo -= transaction.nominal;
+                totalPengeluaran += transaction.nominal;
             }
+        });
+        
+        totalSaldoElement.textContent = formatCurrency(totalSaldo);
+        totalPemasukanElement.textContent = formatCurrency(totalPemasukan);
+        totalPengeluaranElement.textContent = formatCurrency(totalPengeluaran);
+    }
+
+    // Fungsi untuk memfilter transaksi
+    function filterTransactions() {
+        const namaFilter = filterNama.value;
+        const jenisFilter = filterJenis.value;
+        const bulanFilter = filterBulan.value;
+        const tahunFilter = filterTahun.value;
+        
+        let filteredTransactions = transactions;
+        
+        if (namaFilter) {
+            filteredTransactions = filteredTransactions.filter(transaction => transaction.nama === namaFilter);
+        }
+        
+        if (jenisFilter) {
+            filteredTransactions = filteredTransactions.filter(transaction => transaction.jenis === jenisFilter);
+        }
+        
+        if (bulanFilter) {
+            filteredTransactions = filteredTransactions.filter(transaction => {
+                const transactionMonth = new Date(transaction.tanggalAsli).getMonth() + 1;
+                return transactionMonth.toString() === bulanFilter;
+            });
+        }
+        
+        if (tahunFilter) {
+            filteredTransactions = filteredTransactions.filter(transaction => {
+                const transactionYear = new Date(transaction.tanggalAsli).getFullYear();
+                return transactionYear.toString() === tahunFilter;
+            });
+        }
+        
+        renderTransactions(filteredTransactions);
+        
+        if (namaFilter || jenisFilter || bulanFilter || tahunFilter) {
+            showNotification('Filter diterapkan! 🔍', 'info');
+        }
+    }
+
+    // Fungsi untuk mereset filter
+    function resetFilters() {
+        filterNama.value = '';
+        filterJenis.value = '';
+        filterBulan.value = '';
+        filterTahun.value = '';
+        renderTransactions();
+        showNotification('Filter berhasil direset! 🔄', 'info');
+    }
+
+    // Fungsi untuk mengisi filter tahun
+    function populateYearFilters() {
+        const years = new Set();
+        transactions.forEach(transaction => {
+            const year = new Date(transaction.tanggalAsli).getFullYear();
+            years.add(year);
+        });
+        
+        const currentYear = new Date().getFullYear();
+        years.add(currentYear);
+        
+        const sortedYears = Array.from(years).sort((a, b) => b - a);
+        
+        filterTahun.innerHTML = '<option value="">Semua Tahun</option>';
+        tahunRekapanSelect.innerHTML = '';
+        
+        sortedYears.forEach(year => {
+            filterTahun.innerHTML += `<option value="${year}">${year}</option>`;
+            tahunRekapanSelect.innerHTML += `<option value="${year}">${year}</option>`;
+        });
+        
+        tahunRekapanSelect.value = currentYear;
+    }
+
+    // Fungsi untuk generate rekapan tahunan
+    function generateRekapan() {
+        const selectedYear = parseInt(tahunRekapanSelect.value);
+        
+        const monthlyData = {};
+        for (let month = 1; month <= 12; month++) {
+            monthlyData[month] = {
+                pemasukan: 0,
+                pengeluaran: 0,
+                saldo: 0
+            };
+        }
+        
+        transactions.forEach(transaction => {
+            const transactionDate = new Date(transaction.tanggalAsli);
+            const transactionYear = transactionDate.getFullYear();
+            const transactionMonth = transactionDate.getMonth() + 1;
+            
+            if (transactionYear === selectedYear) {
+                if (transaction.jenis === 'masuk') {
+                    monthlyData[transactionMonth].pemasukan += transaction.nominal;
+                    monthlyData[transactionMonth].saldo += transaction.nominal;
+                } else {
+                    monthlyData[transactionMonth].pengeluaran += transaction.nominal;
+                    monthlyData[transactionMonth].saldo -= transaction.nominal;
+                }
+            }
+        });
+        
+        let totalPemasukanTahunan = 0;
+        let totalPengeluaranTahunan = 0;
+        let totalSaldoTahunan = 0;
+        
+        Object.values(monthlyData).forEach(month => {
+            totalPemasukanTahunan += month.pemasukan;
+            totalPengeluaranTahunan += month.pengeluaran;
+            totalSaldoTahunan += month.saldo;
+        });
+        
+        let rekapanHTML = `
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-success">
+                        <tr>
+                            <th>Bulan</th>
+                            <th>Pemasukan</th>
+                            <th>Pengeluaran</th>
+                            <th>Saldo Bulanan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        const monthNames = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        
+        for (let month = 1; month <= 12; month++) {
+            const data = monthlyData[month];
+            const saldoClass = data.saldo >= 0 ? 'text-success' : 'text-danger';
             
             rekapanHTML += `
-                        </tbody>
-                        <tfoot class="table-primary">
-                            <tr>
-                                <td><strong>TOTAL ${selectedYear}</strong></td>
-                                <td class="text-success"><strong>${formatCurrency(totalPemasukanTahunan)}</strong></td>
-                                <td class="text-danger"><strong>${formatCurrency(totalPengeluaranTahunan)}</strong></td>
-                                <td class="${totalSaldoTahunan >= 0 ? 'text-success' : 'text-danger'}"><strong>${formatCurrency(totalSaldoTahunan)}</strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                <tr>
+                    <td><strong>${monthNames[month-1]}</strong></td>
+                    <td class="text-success">${formatCurrency(data.pemasukan)}</td>
+                    <td class="text-danger">${formatCurrency(data.pengeluaran)}</td>
+                    <td class="${saldoClass} fw-bold">${formatCurrency(data.saldo)}</td>
+                </tr>
             `;
-            
-            rekapanContent.innerHTML = rekapanHTML;
-            
-            // Tampilkan notifikasi
-            showNotification(`Rekapan tahun ${selectedYear} berhasil digenerate! 📊`, 'success');
         }
+        
+        rekapanHTML += `
+                    </tbody>
+                    <tfoot class="table-primary">
+                        <tr>
+                            <td><strong>TOTAL ${selectedYear}</strong></td>
+                            <td class="text-success"><strong>${formatCurrency(totalPemasukanTahunan)}</strong></td>
+                            <td class="text-danger"><strong>${formatCurrency(totalPengeluaranTahunan)}</strong></td>
+                            <td class="${totalSaldoTahunan >= 0 ? 'text-success' : 'text-danger'}"><strong>${formatCurrency(totalSaldoTahunan)}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        `;
+        
+        rekapanContent.innerHTML = rekapanHTML;
+        showNotification(`Rekapan tahun ${selectedYear} berhasil digenerate! 📊`, 'success');
+    }
 
-        // Fungsi untuk memuat dan menyimpan catatan
-        function loadNotes() {
-            notesContent.textContent = notes || 'Belum ada catatan. Tambahkan catatan untuk rencana keuangan kamu.';
-            notesInput.value = notes;
-        }
-
-        function saveNotes() {
-            const newNotes = notesInput.value.trim();
+    // Fungsi untuk memuat catatan
+    async function loadNotes() {
+        try {
+            const result = await window.storage.get('fyeliaa-notes', true);
             
-            if (newNotes === '') {
-                showNotification('Catatan tidak boleh kosong!', 'warning');
-                return;
+            if (result && result.value) {
+                notes = result.value;
+                notesContent.innerHTML = `<p class="mb-0">${notes.replace(/\n/g, '<br>')}</p>`;
+                notesInput.value = notes;
+            } else {
+                notesContent.textContent = 'Belum ada catatan. Tambahkan catatan untuk rencana keuangan kamu.';
+                notesInput.value = '';
             }
-            
+        } catch (error) {
+            console.error('Error loading notes:', error);
+            notesContent.textContent = 'Belum ada catatan. Tambahkan catatan untuk rencana keuangan kamu.';
+        }
+    }
+
+    // Fungsi untuk menyimpan catatan
+    async function saveNotes() {
+        const newNotes = notesInput.value.trim();
+        
+        if (newNotes === '') {
+            showNotification('Catatan tidak boleh kosong!', 'warning');
+            return;
+        }
+        
+        try {
+            await window.storage.set('fyeliaa-notes', newNotes, true);
             notes = newNotes;
-            localStorage.setItem('notes', notes);
-            notesContent.textContent = notes;
-            showNotification('Catatan berhasil disimpan! 📝', 'success');
+            notesContent.innerHTML = `<p class="mb-0">${notes.replace(/\n/g, '<br>')}</p>`;
+            showNotification('Catatan berhasil disimpan dan dapat dilihat oleh semua pengguna! 📝', 'success');
+        } catch (error) {
+            console.error('Error saving notes:', error);
+            showNotification('Gagal menyimpan catatan!', 'error');
         }
+    }
 
-        // Fungsi untuk inisialisasi grafik
-        function initChart() {
-            const ctx = document.getElementById('savings-chart').getContext('2d');
-            
-            // Data untuk grafik
-            const labels = [];
-            const data = [];
-            
-            // Generate data berdasarkan transaksi
-            let currentBalance = 0;
-            const sortedTransactions = [...transactions].sort((a, b) => 
-                new Date(a.tanggalAsli) - new Date(b.tanggalAsli)
-            );
-            
-            sortedTransactions.forEach(transaction => {
-                if (transaction.jenis === 'masuk') {
-                    currentBalance += transaction.nominal;
-                } else {
-                    currentBalance -= transaction.nominal;
-                }
-                
-                labels.push(transaction.tanggal);
-                data.push(currentBalance);
-            });
-            
-            // Jika tidak ada transaksi, tampilkan data default
-            if (labels.length === 0) {
-                labels.push('Mulai');
-                data.push(0);
+    // Fungsi untuk inisialisasi grafik
+    function initChart() {
+        const ctx = document.getElementById('savings-chart').getContext('2d');
+        
+        const labels = [];
+        const data = [];
+        
+        let currentBalance = 0;
+        const sortedTransactions = [...transactions].sort((a, b) => 
+            new Date(a.tanggalAsli) - new Date(b.tanggalAsli)
+        );
+        
+        sortedTransactions.forEach(transaction => {
+            if (transaction.jenis === 'masuk') {
+                currentBalance += transaction.nominal;
+            } else {
+                currentBalance -= transaction.nominal;
             }
             
-            savingsChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Saldo Tabungan',
-                        data: data,
-                        borderColor: '#198754',
-                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
+            labels.push(transaction.tanggal);
+            data.push(currentBalance);
+        });
+        
+        if (labels.length === 0) {
+            labels.push('Mulai');
+            data.push(0);
+        }
+        
+        savingsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Saldo Tabungan',
+                    data: data,
+                    borderColor: '#198754',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString('id-ID');
-                                }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + value.toLocaleString('id-ID');
                             }
                         }
                     }
                 }
-            });
-        }
+            }
+        });
+    }
 
-        // Fungsi untuk memperbarui grafik
-        function updateChart() {
-            if (!savingsChart) return;
-            
-            const labels = [];
-            const data = [];
-            
-            let currentBalance = 0;
-            const sortedTransactions = [...transactions].sort((a, b) => 
-                new Date(a.tanggalAsli) - new Date(b.tanggalAsli)
-            );
-            
-            sortedTransactions.forEach(transaction => {
-                if (transaction.jenis === 'masuk') {
-                    currentBalance += transaction.nominal;
-                } else {
-                    currentBalance -= transaction.nominal;
-                }
-                
-                labels.push(transaction.tanggal);
-                data.push(currentBalance);
-            });
-            
-            // Jika tidak ada transaksi, tampilkan data default
-            if (labels.length === 0) {
-                labels.push('Mulai');
-                data.push(0);
+    // Fungsi untuk memperbarui grafik
+    function updateChart() {
+        if (!savingsChart) return;
+        
+        const labels = [];
+        const data = [];
+        
+        let currentBalance = 0;
+        const sortedTransactions = [...transactions].sort((a, b) => 
+            new Date(a.tanggalAsli) - new Date(b.tanggalAsli)
+        );
+        
+        sortedTransactions.forEach(transaction => {
+            if (transaction.jenis === 'masuk') {
+                currentBalance += transaction.nominal;
+            } else {
+                currentBalance -= transaction.nominal;
             }
             
-            savingsChart.data.labels = labels;
-            savingsChart.data.datasets[0].data = data;
-            savingsChart.update();
+            labels.push(transaction.tanggal);
+            data.push(currentBalance);
+        });
+        
+        if (labels.length === 0) {
+            labels.push('Mulai');
+            data.push(0);
         }
+        
+        savingsChart.data.labels = labels;
+        savingsChart.data.datasets[0].data = data;
+        savingsChart.update();
+    }
 
-        // Fungsi untuk menyimpan data ke localStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-        }
+    // Fungsi untuk memformat mata uang
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(amount);
+    }
 
-        // Fungsi untuk memformat mata uang
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(amount);
-        }
+    // Fungsi untuk memformat tanggal
+    function formatDateForDisplay(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+</script>
+```
 
-        // Fungsi untuk memformat tanggal
-        function formatDateForDisplay(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        }
-
-        // Fungsi untuk memuat konfigurasi spreadsheet
-        function loadSpreadsheetConfig() {
-            spreadsheetIdInput.value = spreadsheetConfig.spreadsheetId;
-            sheetNameInput.value = spreadsheetConfig.sheetName;
-        }
-
-        // Fungsi untuk menyimpan konfigurasi spreadsheet
-        function saveSpreadsheetConfig() {
-            const spreadsheetId = spreadsheetIdInput.value.trim();
-            const sheetName = sheetNameInput.value.trim() || 'Transaksi';
-            
-            if (!spreadsheetId) {
-                showNotification('ID Spreadsheet tidak boleh kosong!', 'warning');
-                return;
-            }
-            
-            spreadsheetConfig = {
-                spreadsheetId,
-                sheetName
-            };
-            
-            localStorage.setItem('spreadsheetConfig', JSON.stringify(spreadsheetConfig));
-            showNotification('Konfigurasi spreadsheet berhasil disimpan! ✅', 'success');
-        }
-
-        // Fungsi untuk sinkronisasi data ke spreadsheet
-        async function syncToSpreadsheet() {
-            if (!spreadsheetConfig.spreadsheetId) {
-                showNotification('Harap masukkan ID Spreadsheet terlebih dahulu!', 'warning');
-                return;
-            }
-            
-            showSyncStatus('Menyiapkan data untuk dikirim ke spreadsheet...', 'info');
-            
-            try {
-                // Format data untuk spreadsheet
-                const spreadsheetData = transactions.map(transaction => [
-                    transaction.id,
-                    transaction.tanggalAsli,
-                    transaction.nama,
-                    transaction.jenis === 'masuk' ? 'Uang Masuk' : 'Uang Keluar',
-                    transaction.nominal,
-                    transaction.keterangan || ''
-                ]);
-                
-                // Tambahkan header
-                spreadsheetData.unshift(['ID', 'Tanggal', 'Nama', 'Jenis', 'Nominal', 'Keterangan']);
-                
-                const payload = {
-                    action: 'saveTransactions',
-                    spreadsheetId: spreadsheetConfig.spreadsheetId,
-                    sheetName: spreadsheetConfig.sheetName,
-                    data: spreadsheetData
-                };
-                
-                // Kirim data ke Google Apps Script
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showSyncStatus(`✅ Data berhasil dikirim ke spreadsheet!<br>Total ${transactions.length} transaksi tersimpan.`, 'success');
-                    showNotification(`Data berhasil disinkronisasi ke spreadsheet! 📊`, 'success');
-                } else {
-                    throw new Error(result.error || 'Gagal mengirim data ke spreadsheet');
-                }
-                
-            } catch (error) {
-                console.error('Error syncing to spreadsheet:', error);
-                showSyncStatus(`❌ Gagal mengirim data ke spreadsheet: ${error.message}`, 'error');
-                showNotification('Gagal menyinkronisasi data ke spreadsheet! ❌', 'error');
-            }
-        }
-
-        // Fungsi untuk memuat data dari spreadsheet
-        async function loadFromSpreadsheet() {
-            if (!spreadsheetConfig.spreadsheetId) {
-                showNotification('Harap masukkan ID Spreadsheet terlebih dahulu!', 'warning');
-                return;
-            }
-            
-            showSyncStatus('Memuat data dari spreadsheet...', 'info');
-            
-            try {
-                const payload = {
-                    action: 'loadTransactions',
-                    spreadsheetId: spreadsheetConfig.spreadsheetId,
-                    sheetName: spreadsheetConfig.sheetName
-                };
-                
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    // Proses data dari spreadsheet
-                    const spreadsheetData = result.data;
-                    const header = spreadsheetData[0];
-                    
-                    // Validasi header
-                    const expectedHeader = ['ID', 'Tanggal', 'Nama', 'Jenis', 'Nominal', 'Keterangan'];
-                    const isValidHeader = expectedHeader.every((col, index) => 
-                        header[index] && header[index].toString().trim() === col
-                    );
-                    
-                    if (!isValidHeader) {
-                        throw new Error('Format spreadsheet tidak sesuai. Pastikan kolom: ID, Tanggal, Nama, Jenis, Nominal, Keterangan');
-                    }
-                    
-                    // Konversi data spreadsheet ke format aplikasi
-                    const loadedTransactions = [];
-                    for (let i = 1; i < spreadsheetData.length; i++) {
-                        const row = spreadsheetData[i];
-                        if (row.length >= 5) {
-                            const transaction = {
-                                id: parseInt(row[0]) || Date.now() + i,
-                                tanggalAsli: row[1],
-                                tanggal: formatDateForDisplay(row[1]),
-                                nama: row[2],
-                                jenis: row[3] === 'Uang Masuk' ? 'masuk' : 'keluar',
-                                nominal: parseInt(row[4]) || 0,
-                                keterangan: row[5] || ''
-                            };
-                            loadedTransactions.push(transaction);
-                        }
-                    }
-                    
-                    // Update data aplikasi
-                    transactions = loadedTransactions;
-                    saveToLocalStorage();
-                    renderTransactions();
-                    updateBalance();
-                    updateChart();
-                    populateYearFilters();
-                    
-                    showSyncStatus(`✅ Berhasil memuat ${transactions.length} transaksi dari spreadsheet!`, 'success');
-                    showNotification(`Berhasil memuat ${transactions.length} transaksi dari spreadsheet! 📥`, 'success');
-                } else {
-                    throw new Error(result.error || 'Gagal memuat data dari spreadsheet');
-                }
-                
-            } catch (error) {
-                console.error('Error loading from spreadsheet:', error);
-                showSyncStatus(`❌ Gagal memuat data dari spreadsheet: ${error.message}`, 'error');
-                showNotification('Gagal memuat data dari spreadsheet! ❌', 'error');
-            }
-        }
-
-        // Fungsi untuk menampilkan status sinkronisasi
-        function showSyncStatus(message, type) {
-            syncStatus.innerHTML = message;
-            syncStatus.className = `sync-status ${type === 'success' ? 'sync-success' : type === 'error' ? 'sync-error' : ''}`;
-            syncStatus.style.display = 'block';
-            
-            // Sembunyikan setelah 5 detik untuk info, tetap tampil untuk error/success
-            if (type === 'info') {
-                setTimeout(() => {
-                    syncStatus.style.display = 'none';
-                }, 5000);
-            }
-        }
-    </script>
 </body>
 </html>
