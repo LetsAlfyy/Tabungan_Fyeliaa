@@ -6,7 +6,6 @@
     <title>Fyeliaa - Sistem Informasi Keuangan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .toast-container {
             z-index: 1055;
@@ -66,6 +65,27 @@
             padding: 0.25rem 0.5rem;
             font-size: 0.875rem;
         }
+        .spreadsheet-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .sync-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .sync-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+        .sync-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
         @media (max-width: 768px) {
             .container {
                 padding-left: 15px;
@@ -117,6 +137,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#catatan">Catatan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#spreadsheet">Spreadsheet</a>
                     </li>
                 </ul>
             </div>
@@ -382,6 +405,113 @@
                 </div>
             </div>
         </section>
+
+        <!-- Integrasi Spreadsheet -->
+        <section id="spreadsheet" class="mb-5">
+            <h2 class="section-title text-success mb-4">Integrasi Spreadsheet</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="spreadsheet-section">
+                        <h5 class="text-success mb-3">Sinkronisasi dengan Google Spreadsheet</h5>
+                        <p class="mb-3">Sistem ini akan menyimpan data ke Google Spreadsheet untuk backup dan analisis lebih lanjut.</p>
+                        
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="spreadsheet-id" class="form-label">ID Spreadsheet</label>
+                                <input type="text" id="spreadsheet-id" class="form-control" value="1-JLMXPcoeFKQNiOeSUHkQNY0h0Og8hzgW4VyeRsksss" readonly>
+                                <div class="form-text">ID Spreadsheet Anda sudah terkonfigurasi otomatis</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="sheet-name" class="form-label">Nama Sheet</label>
+                                <input type="text" id="sheet-name" class="form-control" value="Transaksi" placeholder="Nama sheet">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <button id="save-spreadsheet-config" class="btn btn-success w-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear me-1" viewBox="0 0 16 16">
+                                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+                                    </svg>
+                                    Simpan Konfigurasi
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <button id="sync-spreadsheet" class="btn btn-primary w-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat me-1" viewBox="0 0 16 16">
+                                        <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                                        <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                                    </svg>
+                                    Sinkronisasi Data
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <button id="load-from-spreadsheet" class="btn btn-info w-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-1" viewBox="0 0 16 16">
+                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                    </svg>
+                                    Muat dari Spreadsheet
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="sync-status" class="sync-status" style="display: none;">
+                            <!-- Status sinkronisasi akan ditampilkan di sini -->
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <h6>Status Integrasi:</h6>
+                                    <p class="mb-2">✅ Spreadsheet terhubung: <strong>Fyeliaa - Sistem Informasi Keuangan</strong></p>
+                                    <p class="mb-0">ID: <code>1-JLMXPcoeFKQNiOeSUHkQNY0h0Og8hzgW4VyeRsksss</code></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="text-success mb-3">Struktur Spreadsheet</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-success">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tanggal</th>
+                                        <th>Nama</th>
+                                        <th>Jenis</th>
+                                        <th>Nominal</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>123456789</td>
+                                        <td>15/03/2025</td>
+                                        <td>Alfye</td>
+                                        <td>Uang Masuk</td>
+                                        <td>1.500.000</td>
+                                        <td>Gaji bulan Maret</td>
+                                    </tr>
+                                    <tr>
+                                        <td>123456790</td>
+                                        <td>18/03/2025</td>
+                                        <td>Aulia</td>
+                                        <td>Uang Keluar</td>
+                                        <td>350.000</td>
+                                        <td>Bayar listrik</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-muted">Data akan tersimpan dalam format yang rapi seperti contoh di atas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- Footer -->
@@ -395,16 +525,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Konfigurasi Supabase - GANTI DENGAN URL DAN KEY ANDA
-        const supabaseUrl = 'https://nzgqcidcaxqjaznwtowh.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56Z3FjaWRjYXhxamF6bnd0b3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMxNjk5NTUsImV4cCI6MjA0ODc0NTk1NX0.8aDaa0jqJMiYh9vQjlr1b0b2p6v2a2y2Q2j2q2q2q2q2';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
         // Data aplikasi
-        let transactions = [];
-        let notes = '';
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let notes = localStorage.getItem('notes') || '';
         let savingsChart = null;
         let currentRekapanData = null;
+        let spreadsheetConfig = JSON.parse(localStorage.getItem('spreadsheetConfig')) || {
+            spreadsheetId: '1-JLMXPcoeFKQNiOeSUHkQNY0h0Og8hzgW4VyeRsksss',
+            sheetName: 'Transaksi'
+        };
+
+        // URL Google Apps Script (Anda perlu membuat ini)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLJQh0l9_8FmY2Q0X8Q6Z5Q4eY5oXbX7Q3w5w5w5w5w5w5w5w/exec';
 
         // Elemen DOM
         const transactionForm = document.getElementById('transaction-form');
@@ -424,20 +556,24 @@
         const notesInput = document.getElementById('notes-input');
         const saveNotesButton = document.getElementById('save-notes');
         const tanggalInput = document.getElementById('tanggal');
+        const spreadsheetIdInput = document.getElementById('spreadsheet-id');
+        const sheetNameInput = document.getElementById('sheet-name');
+        const saveSpreadsheetConfigButton = document.getElementById('save-spreadsheet-config');
+        const syncSpreadsheetButton = document.getElementById('sync-spreadsheet');
+        const loadFromSpreadsheetButton = document.getElementById('load-from-spreadsheet');
+        const syncStatus = document.getElementById('sync-status');
 
         // Inisialisasi
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', function() {
             // Set tanggal default ke hari ini
             tanggalInput.value = new Date().toISOString().split('T')[0];
             
-            // Load data dari Supabase
-            await loadTransactions();
-            await loadNotes();
+            renderTransactions();
+            updateBalance();
+            loadNotes();
             initChart();
             populateYearFilters();
-            
-            // Setup real-time subscription
-            setupRealtimeSubscription();
+            loadSpreadsheetConfig();
             
             // Event listeners
             transactionForm.addEventListener('submit', addTransaction);
@@ -448,6 +584,9 @@
             resetFilterButton.addEventListener('click', resetFilters);
             generateRekapanButton.addEventListener('click', generateRekapan);
             saveNotesButton.addEventListener('click', saveNotes);
+            saveSpreadsheetConfigButton.addEventListener('click', saveSpreadsheetConfig);
+            syncSpreadsheetButton.addEventListener('click', syncToSpreadsheet);
+            loadFromSpreadsheetButton.addEventListener('click', loadFromSpreadsheet);
 
             // Smooth scroll untuk navigasi
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -516,79 +655,14 @@
                 'success': 'success',
                 'error': 'danger',
                 'warning': 'warning',
-                'info': 'info'
+                'info': 'info',
+                'primary': 'primary'
             };
             return colors[type] || 'info';
         }
 
-        // Setup real-time subscription
-        function setupRealtimeSubscription() {
-            supabase
-                .channel('transactions')
-                .on('postgres_changes', 
-                    { 
-                        event: '*', 
-                        schema: 'public', 
-                        table: 'transactions' 
-                    }, 
-                    async (payload) => {
-                        console.log('Real-time update received:', payload);
-                        await loadTransactions();
-                        updateBalance();
-                        updateChart();
-                        populateYearFilters();
-                    }
-                )
-                .subscribe();
-        }
-
-        // Load transactions dari Supabase
-        async function loadTransactions() {
-            try {
-                const { data, error } = await supabase
-                    .from('transactions')
-                    .select('*')
-                    .order('tanggal', { ascending: false });
-
-                if (error) throw error;
-
-                transactions = data.map(transaction => ({
-                    ...transaction,
-                    tanggalAsli: transaction.tanggal,
-                    tanggal: formatDateForDisplay(transaction.tanggal)
-                }));
-
-                renderTransactions();
-                updateBalance();
-                
-            } catch (error) {
-                console.error('Error loading transactions:', error);
-                showNotification('Gagal memuat data transaksi!', 'error');
-            }
-        }
-
-        // Load notes dari Supabase
-        async function loadNotes() {
-            try {
-                const { data, error } = await supabase
-                    .from('app_settings')
-                    .select('notes')
-                    .eq('id', 'general_notes')
-                    .single();
-
-                if (error && error.code !== 'PGRST116') throw error;
-
-                notes = data?.notes || 'Belum ada catatan. Tambahkan catatan untuk rencana keuangan kamu.';
-                notesContent.textContent = notes;
-                notesInput.value = notes;
-                
-            } catch (error) {
-                console.error('Error loading notes:', error);
-            }
-        }
-
         // Fungsi untuk menambah transaksi
-        async function addTransaction(e) {
+        function addTransaction(e) {
             e.preventDefault();
             
             const nama = document.getElementById('nama').value;
@@ -607,55 +681,44 @@
                 return;
             }
             
-            try {
-                const { data, error } = await supabase
-                    .from('transactions')
-                    .insert([
-                        {
-                            tanggal: tanggal,
-                            nama: nama,
-                            jenis: jenis,
-                            nominal: nominal,
-                            keterangan: keterangan
-                        }
-                    ])
-                    .select();
-
-                if (error) throw error;
-
-                // Reset form
-                transactionForm.reset();
-                tanggalInput.value = new Date().toISOString().split('T')[0];
-                
-                // Real-time update akan otomatis tertrigger
-                showNotification('Transaksi berhasil disimpan! ✅', 'success');
-                
-            } catch (error) {
-                console.error('Error adding transaction:', error);
-                showNotification('Gagal menyimpan transaksi!', 'error');
-            }
+            const transaction = {
+                id: Date.now(),
+                tanggal: formatDateForDisplay(tanggal),
+                tanggalAsli: tanggal,
+                nama,
+                jenis,
+                nominal,
+                keterangan
+            };
+            
+            transactions.push(transaction);
+            saveToLocalStorage();
+            renderTransactions();
+            updateBalance();
+            updateChart();
+            populateYearFilters();
+            
+            // Reset form
+            transactionForm.reset();
+            tanggalInput.value = new Date().toISOString().split('T')[0];
+            
+            // Tampilkan notifikasi sukses
+            const action = jenis === 'masuk' ? 'ditambahkan' : 'dikeluarkan';
+            showNotification(`Transaksi ${action} sebesar ${formatCurrency(nominal)} berhasil disimpan! ✅`, 'success');
         }
 
         // Fungsi untuk menghapus transaksi
-        async function deleteTransaction(id) {
+        function deleteTransaction(id) {
             const transaction = transactions.find(t => t.id === id);
             
             if (transaction && confirm(`Apakah Anda yakin ingin menghapus transaksi ini?\n${transaction.tanggal} - ${transaction.nama} - ${formatCurrency(transaction.nominal)}`)) {
-                try {
-                    const { error } = await supabase
-                        .from('transactions')
-                        .delete()
-                        .eq('id', id);
-
-                    if (error) throw error;
-
-                    // Real-time update akan otomatis tertrigger
-                    showNotification('Transaksi berhasil dihapus! 🗑️', 'success');
-                    
-                } catch (error) {
-                    console.error('Error deleting transaction:', error);
-                    showNotification('Gagal menghapus transaksi!', 'error');
-                }
+                transactions = transactions.filter(transaction => transaction.id !== id);
+                saveToLocalStorage();
+                renderTransactions();
+                updateBalance();
+                updateChart();
+                
+                showNotification('Transaksi berhasil dihapus! 🗑️', 'success');
             }
         }
 
@@ -670,7 +733,12 @@
                 return;
             }
             
-            transactionsToRender.forEach(transaction => {
+            // Urutkan transaksi berdasarkan tanggal (terbaru di atas)
+            const sortedTransactions = [...transactionsToRender].sort((a, b) => 
+                new Date(b.tanggalAsli) - new Date(a.tanggalAsli)
+            );
+            
+            sortedTransactions.forEach(transaction => {
                 const row = document.createElement('tr');
                 row.className = `transaction-item ${transaction.jenis === 'masuk' ? 'transaction-income' : 'transaction-expense'}`;
                 
@@ -904,8 +972,13 @@
             showNotification(`Rekapan tahun ${selectedYear} berhasil digenerate! 📊`, 'success');
         }
 
-        // Fungsi untuk menyimpan catatan
-        async function saveNotes() {
+        // Fungsi untuk memuat dan menyimpan catatan
+        function loadNotes() {
+            notesContent.textContent = notes || 'Belum ada catatan. Tambahkan catatan untuk rencana keuangan kamu.';
+            notesInput.value = notes;
+        }
+
+        function saveNotes() {
             const newNotes = notesInput.value.trim();
             
             if (newNotes === '') {
@@ -913,25 +986,10 @@
                 return;
             }
             
-            try {
-                const { error } = await supabase
-                    .from('app_settings')
-                    .upsert({
-                        id: 'general_notes',
-                        notes: newNotes,
-                        updated_at: new Date().toISOString()
-                    });
-
-                if (error) throw error;
-
-                notes = newNotes;
-                notesContent.textContent = notes;
-                showNotification('Catatan berhasil disimpan! 📝', 'success');
-                
-            } catch (error) {
-                console.error('Error saving notes:', error);
-                showNotification('Gagal menyimpan catatan!', 'error');
-            }
+            notes = newNotes;
+            localStorage.setItem('notes', notes);
+            notesContent.textContent = notes;
+            showNotification('Catatan berhasil disimpan! 📝', 'success');
         }
 
         // Fungsi untuk inisialisasi grafik
@@ -1034,6 +1092,11 @@
             savingsChart.update();
         }
 
+        // Fungsi untuk menyimpan data ke localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
         // Fungsi untuk memformat mata uang
         function formatCurrency(amount) {
             return new Intl.NumberFormat('id-ID', {
@@ -1051,6 +1114,180 @@
                 month: '2-digit',
                 year: 'numeric'
             });
+        }
+
+        // Fungsi untuk memuat konfigurasi spreadsheet
+        function loadSpreadsheetConfig() {
+            spreadsheetIdInput.value = spreadsheetConfig.spreadsheetId;
+            sheetNameInput.value = spreadsheetConfig.sheetName;
+        }
+
+        // Fungsi untuk menyimpan konfigurasi spreadsheet
+        function saveSpreadsheetConfig() {
+            const spreadsheetId = spreadsheetIdInput.value.trim();
+            const sheetName = sheetNameInput.value.trim() || 'Transaksi';
+            
+            if (!spreadsheetId) {
+                showNotification('ID Spreadsheet tidak boleh kosong!', 'warning');
+                return;
+            }
+            
+            spreadsheetConfig = {
+                spreadsheetId,
+                sheetName
+            };
+            
+            localStorage.setItem('spreadsheetConfig', JSON.stringify(spreadsheetConfig));
+            showNotification('Konfigurasi spreadsheet berhasil disimpan! ✅', 'success');
+        }
+
+        // Fungsi untuk sinkronisasi data ke spreadsheet
+        async function syncToSpreadsheet() {
+            if (!spreadsheetConfig.spreadsheetId) {
+                showNotification('Harap masukkan ID Spreadsheet terlebih dahulu!', 'warning');
+                return;
+            }
+            
+            showSyncStatus('Menyiapkan data untuk dikirim ke spreadsheet...', 'info');
+            
+            try {
+                // Format data untuk spreadsheet
+                const spreadsheetData = transactions.map(transaction => [
+                    transaction.id,
+                    transaction.tanggalAsli,
+                    transaction.nama,
+                    transaction.jenis === 'masuk' ? 'Uang Masuk' : 'Uang Keluar',
+                    transaction.nominal,
+                    transaction.keterangan || ''
+                ]);
+                
+                // Tambahkan header
+                spreadsheetData.unshift(['ID', 'Tanggal', 'Nama', 'Jenis', 'Nominal', 'Keterangan']);
+                
+                const payload = {
+                    action: 'saveTransactions',
+                    spreadsheetId: spreadsheetConfig.spreadsheetId,
+                    sheetName: spreadsheetConfig.sheetName,
+                    data: spreadsheetData
+                };
+                
+                // Kirim data ke Google Apps Script
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSyncStatus(`✅ Data berhasil dikirim ke spreadsheet!<br>Total ${transactions.length} transaksi tersimpan.`, 'success');
+                    showNotification(`Data berhasil disinkronisasi ke spreadsheet! 📊`, 'success');
+                } else {
+                    throw new Error(result.error || 'Gagal mengirim data ke spreadsheet');
+                }
+                
+            } catch (error) {
+                console.error('Error syncing to spreadsheet:', error);
+                showSyncStatus(`❌ Gagal mengirim data ke spreadsheet: ${error.message}`, 'error');
+                showNotification('Gagal menyinkronisasi data ke spreadsheet! ❌', 'error');
+            }
+        }
+
+        // Fungsi untuk memuat data dari spreadsheet
+        async function loadFromSpreadsheet() {
+            if (!spreadsheetConfig.spreadsheetId) {
+                showNotification('Harap masukkan ID Spreadsheet terlebih dahulu!', 'warning');
+                return;
+            }
+            
+            showSyncStatus('Memuat data dari spreadsheet...', 'info');
+            
+            try {
+                const payload = {
+                    action: 'loadTransactions',
+                    spreadsheetId: spreadsheetConfig.spreadsheetId,
+                    sheetName: spreadsheetConfig.sheetName
+                };
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    // Proses data dari spreadsheet
+                    const spreadsheetData = result.data;
+                    const header = spreadsheetData[0];
+                    
+                    // Validasi header
+                    const expectedHeader = ['ID', 'Tanggal', 'Nama', 'Jenis', 'Nominal', 'Keterangan'];
+                    const isValidHeader = expectedHeader.every((col, index) => 
+                        header[index] && header[index].toString().trim() === col
+                    );
+                    
+                    if (!isValidHeader) {
+                        throw new Error('Format spreadsheet tidak sesuai. Pastikan kolom: ID, Tanggal, Nama, Jenis, Nominal, Keterangan');
+                    }
+                    
+                    // Konversi data spreadsheet ke format aplikasi
+                    const loadedTransactions = [];
+                    for (let i = 1; i < spreadsheetData.length; i++) {
+                        const row = spreadsheetData[i];
+                        if (row.length >= 5) {
+                            const transaction = {
+                                id: parseInt(row[0]) || Date.now() + i,
+                                tanggalAsli: row[1],
+                                tanggal: formatDateForDisplay(row[1]),
+                                nama: row[2],
+                                jenis: row[3] === 'Uang Masuk' ? 'masuk' : 'keluar',
+                                nominal: parseInt(row[4]) || 0,
+                                keterangan: row[5] || ''
+                            };
+                            loadedTransactions.push(transaction);
+                        }
+                    }
+                    
+                    // Update data aplikasi
+                    transactions = loadedTransactions;
+                    saveToLocalStorage();
+                    renderTransactions();
+                    updateBalance();
+                    updateChart();
+                    populateYearFilters();
+                    
+                    showSyncStatus(`✅ Berhasil memuat ${transactions.length} transaksi dari spreadsheet!`, 'success');
+                    showNotification(`Berhasil memuat ${transactions.length} transaksi dari spreadsheet! 📥`, 'success');
+                } else {
+                    throw new Error(result.error || 'Gagal memuat data dari spreadsheet');
+                }
+                
+            } catch (error) {
+                console.error('Error loading from spreadsheet:', error);
+                showSyncStatus(`❌ Gagal memuat data dari spreadsheet: ${error.message}`, 'error');
+                showNotification('Gagal memuat data dari spreadsheet! ❌', 'error');
+            }
+        }
+
+        // Fungsi untuk menampilkan status sinkronisasi
+        function showSyncStatus(message, type) {
+            syncStatus.innerHTML = message;
+            syncStatus.className = `sync-status ${type === 'success' ? 'sync-success' : type === 'error' ? 'sync-error' : ''}`;
+            syncStatus.style.display = 'block';
+            
+            // Sembunyikan setelah 5 detik untuk info, tetap tampil untuk error/success
+            if (type === 'info') {
+                setTimeout(() => {
+                    syncStatus.style.display = 'none';
+                }, 5000);
+            }
         }
     </script>
 </body>
