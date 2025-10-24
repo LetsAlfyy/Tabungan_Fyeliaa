@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Sistem Informasi Keuangan untuk Alfye & Aulia",
   "type": "module",
-  "dependencies": {
-    "uuid": "^9.0.0"
-  },
   "scripts": {
     "dev": "vercel dev",
     "build": "vercel build"
