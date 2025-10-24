@@ -1,7 +1,23 @@
 {
-  "functions": {
-    "api/data.js": {
-      "maxDuration": 30
+  "version": 2,
+  "builds": [
+    {
+      "src": "data.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
     }
-  }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/data.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
 }
