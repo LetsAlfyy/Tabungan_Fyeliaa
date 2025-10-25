@@ -1,31 +1,8 @@
-// data.js - Backend API dengan MongoDB
-import { MongoClient } from 'mongodb';
-
-// GANTI dengan connection string ANDA
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://fyeliaa_user:Fyeliaa123!@cluster0.abc123.mongodb.net/fyeliaa?retryWrites=true&w=majority";
-const DB_NAME = 'fyeliaa';
-
-let cachedClient = null;
-let cachedDb = null;
-
-async function connectToDatabase() {
-  if (cachedClient && cachedDb) {
-    return { client: cachedClient, db: cachedDb };
-  }
-
-  console.log('🔗 Connecting to MongoDB...');
-  
-  const client = new MongoClient(MONGODB_URI);
-  await client.connect();
-
-  const db = client.db(DB_NAME);
-
-  cachedClient = client;
-  cachedDb = db;
-
-  console.log('✅ Connected to MongoDB');
-  return { client, db };
-}
+// data.js - SIMPLE VERSION (Memory Storage)
+let storage = {
+  transactions: [],
+  notes: "Selamat datang di Fyeliaa! 💰"
+};
 
 function generateId() {
   return 'id_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
@@ -46,31 +23,19 @@ export default async function handler(req, res) {
   try {
     console.log('📱 API Request:', { method: req.method, type, id });
 
-    const { db } = await connectToDatabase();
-
     // GET: Ambil transactions
     if (req.method === 'GET' && type === 'transactions') {
-      const transactions = await db.collection('transactions')
-        .find({})
-        .sort({ tanggalAsli: -1 })
-        .toArray();
-      
-      console.log('📊 Transactions from DB:', transactions.length);
-      
       return res.status(200).json({
         success: true,
-        data: transactions
+        data: storage.transactions
       });
     }
 
     // GET: Ambil notes
     if (req.method === 'GET' && type === 'notes') {
-      const notesDoc = await db.collection('settings').findOne({ key: 'notes' });
-      const notes = notesDoc ? notesDoc.value : "Selamat datang di Fyeliaa! 💰";
-      
       return res.status(200).json({
         success: true,
-        data: notes
+        data: storage.notes
       });
     }
 
@@ -94,6 +59,7 @@ export default async function handler(req, res) {
         createdAt: new Date().toISOString()
       };
       
+      // Validasi
       if (!transaction.nama || !transaction.jenis || !transaction.nominal || !transaction.tanggal) {
         return res.status(400).json({
           success: false,
@@ -101,9 +67,10 @@ export default async function handler(req, res) {
         });
       }
       
-      await db.collection('transactions').insertOne(transaction);
+      // Simpan ke memory
+      storage.transactions.unshift(transaction);
       
-      console.log('✅ Transaction saved to DB');
+      console.log('✅ Transaction saved:', transaction);
       
       return res.status(201).json({
         success: true,
@@ -122,12 +89,7 @@ export default async function handler(req, res) {
       }
 
       const notesData = body.notes || body;
-      
-      await db.collection('settings').updateOne(
-        { key: 'notes' },
-        { $set: { value: notesData } },
-        { upsert: true }
-      );
+      storage.notes = notesData;
       
       return res.status(200).json({
         success: true,
@@ -144,9 +106,10 @@ export default async function handler(req, res) {
         });
       }
       
-      const result = await db.collection('transactions').deleteOne({ id: id });
+      const initialLength = storage.transactions.length;
+      storage.transactions = storage.transactions.filter(t => t.id !== id);
       
-      if (result.deletedCount === 0) {
+      if (storage.transactions.length === initialLength) {
         return res.status(404).json({
           success: false,
           message: 'Transaksi tidak ditemukan'
@@ -165,10 +128,10 @@ export default async function handler(req, res) {
     });
     
   } catch (error) {
-    console.error('❌ MongoDB Error:', error);
+    console.error('❌ API Error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Database error: ' + error.message
+      message: 'Server error: ' + error.message
     });
   }
 }
