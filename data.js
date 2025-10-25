@@ -1,51 +1,5 @@
-// data.js - MONGODB dengan ERROR HANDLING
-import { MongoClient } from 'mongodb';
-
-// GANTI DENGAN CONNECTION STRING ANDA
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://fyeliaa_user:Fyeliaa123@cluster0.abc123.mongodb.net/fyeliaa?retryWrites=true&w=majority";
-
-let cachedDb = null;
-let connectionError = null;
-
-async function connectToDatabase() {
-  if (cachedDb) {
-    return cachedDb;
-  }
-
-  if (connectionError) {
-    throw connectionError;
-  }
-
-  console.log('🔄 Connecting to MongoDB...');
-  
-  try {
-    const client = new MongoClient(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 10000,
-    });
-    
-    await client.connect();
-    const db = client.db();
-    cachedDb = db;
-    
-    console.log('✅ MongoDB Connected Successfully!');
-    return db;
-  } catch (error) {
-    console.error('❌ MongoDB Connection Failed:', error.message);
-    connectionError = error;
-    throw error;
-  }
-}
-
-function generateId() {
-  return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-}
-
-// Fallback data jika MongoDB down
-const fallbackData = {
-  transactions: [],
-  notes: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
-};
+// data.js - GOOGLE SHEETS VERSION
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzbkvEBnYpoM_yFtNgFcTlLaFiRk7UAsI2Qsy3DLZMEfPx2pr_Q0qVjM4jvwvihKRDkw/exec'; // GANTI DENGAN URL DEPLOY ANDA
 
 export default async function handler(req, res) {
   // CORS headers
@@ -60,224 +14,54 @@ export default async function handler(req, res) {
   const { type, id } = req.query;
 
   try {
-    console.log('📱 API Request:', { method: req.method, type, id });
+    console.log('📱 Forwarding to Google Sheets:', { method: req.method, type, id });
 
-    // GET TRANSACTIONS - dengan fallback
-    if (req.method === 'GET' && type === 'transactions') {
-      try {
-        const db = await connectToDatabase();
-        const transactions = await db.collection('transactions')
-          .find({})
-          .sort({ tanggalAsli: -1 })
-          .toArray();
-        
-        console.log(`📊 Found ${transactions.length} transactions from MongoDB`);
-        
-        return res.status(200).json({
-          success: true,
-          data: transactions,
-          source: 'mongodb'
-        });
-      } catch (error) {
-        console.log('⚠️ Using fallback data for transactions');
-        return res.status(200).json({
-          success: true,
-          data: fallbackData.transactions,
-          source: 'fallback'
-        });
+    // Build URL for Google Apps Script
+    let url = `${GOOGLE_SCRIPT_URL}?type=${type}`;
+    if (id) url += `&id=${encodeURIComponent(id)}`;
+
+    const options = {
+      method: req.method,
+      headers: {
+        'Content-Type': 'application/json',
       }
+    };
+
+    // Add body for POST requests
+    if (req.method === 'POST') {
+      options.body = JSON.stringify(req.body);
     }
 
-    // GET NOTES - dengan fallback
-    if (req.method === 'GET' && type === 'notes') {
-      try {
-        const db = await connectToDatabase();
-        const notesDoc = await db.collection('settings').findOne({ key: 'notes' });
-        const notes = notesDoc ? notesDoc.value : fallbackData.notes;
-        
-        return res.status(200).json({
-          success: true,
-          data: notes,
-          source: 'mongodb'
-        });
-      } catch (error) {
-        console.log('⚠️ Using fallback data for notes');
-        return res.status(200).json({
-          success: true,
-          data: fallbackData.notes,
-          source: 'fallback'
-        });
-      }
-    }
-
-    // ADD TRANSACTION
-    if (req.method === 'POST' && type === 'transaction') {
-      let body;
-      try {
-        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      } catch (e) {
-        body = req.body;
-      }
-
-      console.log('💾 Saving transaction:', body);
-
-      const transaction = {
-        id: generateId(),
-        tanggal: body.tanggal,
-        tanggalAsli: body.tanggalAsli,
-        nama: body.nama,
-        jenis: body.jenis,
-        nominal: parseInt(body.nominal),
-        keterangan: body.keterangan || '',
-        createdAt: new Date().toISOString()
-      };
-
-      // Validasi
-      if (!transaction.nama || !transaction.jenis || !transaction.nominal || !transaction.tanggal) {
-        return res.status(400).json({
-          success: false,
-          message: 'Data tidak lengkap!'
-        });
-      }
-
-      try {
-        const db = await connectToDatabase();
-        await db.collection('transactions').insertOne(transaction);
-        
-        console.log('✅ Transaction saved to MongoDB! ID:', transaction.id);
-        
-        // Juga simpan ke fallback
-        fallbackData.transactions.unshift(transaction);
-        
-        return res.status(201).json({
-          success: true,
-          data: transaction,
-          message: 'Transaksi berhasil disimpan! 🎉',
-          source: 'mongodb'
-        });
-      } catch (error) {
-        console.error('❌ MongoDB save failed, using fallback');
-        
-        // Simpan ke fallback data
-        fallbackData.transactions.unshift(transaction);
-        
-        return res.status(201).json({
-          success: true,
-          data: transaction,
-          message: 'Transaksi disimpan (offline mode) 📱',
-          source: 'fallback'
-        });
-      }
-    }
-
-    // SAVE NOTES
-    if (req.method === 'POST' && type === 'notes') {
-      let body;
-      try {
-        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      } catch (e) {
-        body = req.body;
-      }
-
-      const notesData = body.notes || body;
-
-      try {
-        const db = await connectToDatabase();
-        await db.collection('settings').updateOne(
-          { key: 'notes' },
-          { $set: { value: notesData } },
-          { upsert: true }
-        );
-
-        console.log('📝 Notes saved to MongoDB');
-        
-        // Juga simpan ke fallback
-        fallbackData.notes = notesData;
-
-        return res.status(200).json({
-          success: true,
-          message: 'Catatan berhasil disimpan! 📝',
-          source: 'mongodb'
-        });
-      } catch (error) {
-        console.error('❌ MongoDB notes save failed, using fallback');
-        
-        // Simpan ke fallback
-        fallbackData.notes = notesData;
-
-        return res.status(200).json({
-          success: true,
-          message: 'Catatan disimpan (offline mode) 📱',
-          source: 'fallback'
-        });
-      }
-    }
-
-    // DELETE TRANSACTION
-    if (req.method === 'DELETE' && type === 'transaction') {
-      if (!id) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID transaksi diperlukan!'
-        });
-      }
-
-      try {
-        const db = await connectToDatabase();
-        const result = await db.collection('transactions').deleteOne({ id: id });
-        
-        if (result.deletedCount === 0) {
-          // Coba hapus dari fallback juga
-          fallbackData.transactions = fallbackData.transactions.filter(t => t.id !== id);
-          
-          return res.status(404).json({
-            success: false,
-            message: 'Transaksi tidak ditemukan!'
-          });
-        }
-
-        console.log('🗑️ Transaction deleted from MongoDB:', id);
-        
-        // Juga hapus dari fallback
-        fallbackData.transactions = fallbackData.transactions.filter(t => t.id !== id);
-
-        return res.status(200).json({
-          success: true,
-          message: 'Transaksi berhasil dihapus! 🗑️',
-          source: 'mongodb'
-        });
-      } catch (error) {
-        console.error('❌ MongoDB delete failed, using fallback');
-        
-        // Hapus dari fallback
-        const initialLength = fallbackData.transactions.length;
-        fallbackData.transactions = fallbackData.transactions.filter(t => t.id !== id);
-        
-        if (fallbackData.transactions.length === initialLength) {
-          return res.status(404).json({
-            success: false,
-            message: 'Transaksi tidak ditemukan!'
-          });
-        }
-
-        return res.status(200).json({
-          success: true,
-          message: 'Transaksi dihapus (offline mode) 📱',
-          source: 'fallback'
-        });
-      }
-    }
-
-    return res.status(405).json({
-      success: false,
-      message: 'Method tidak didukung!'
-    });
-
+    console.log('🔗 Calling Google Script:', url);
+    
+    const response = await fetch(url, options);
+    const result = await response.json();
+    
+    console.log('✅ Google Sheets response:', result);
+    
+    res.status(response.status).json(result);
+    
   } catch (error) {
-    console.error('❌ Server Error:', error);
-    return res.status(500).json({
+    console.error('❌ Google Sheets error:', error);
+    
+    // Fallback responses
+    if (req.method === 'GET' && type === 'transactions') {
+      return res.status(200).json({
+        success: true,
+        data: []
+      });
+    }
+    
+    if (req.method === 'GET' && type === 'notes') {
+      return res.status(200).json({
+        success: true,
+        data: "Selamat datang di Fyeliaa! 💰"
+      });
+    }
+    
+    res.status(500).json({
       success: false,
-      message: 'Terjadi kesalahan server'
+      message: 'Koneksi ke Google Sheets gagal: ' + error.message
     });
   }
 }
