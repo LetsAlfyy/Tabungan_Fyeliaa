@@ -1,9 +1,33 @@
-// data.js - SIMPLE VERSION (Memory Storage)
-let storage = {
-  transactions: [],
-  notes: "Selamat datang di Fyeliaa! 💰"
-};
+// data.js - Backend API dengan MongoDB
+import { MongoClient } from 'mongodb';
 
+// MongoDB connection - GANTI dengan connection string kamu
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://fyeliaa_user:password123@cluster0.abc123.mongodb.net/fyeliaa?retryWrites=true&w=majority";
+const DB_NAME = 'fyeliaa';
+
+let cachedClient = null;
+let cachedDb = null;
+
+async function connectToDatabase() {
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb };
+  }
+
+  console.log('🔗 Connecting to MongoDB...');
+  
+  const client = new MongoClient(MONGODB_URI);
+  await client.connect();
+
+  const db = client.db(DB_NAME);
+
+  cachedClient = client;
+  cachedDb = db;
+
+  console.log('✅ Connected to MongoDB');
+  return { client, db };
+}
+
+// Helper function untuk generate ID
 function generateId() {
   return 'id_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
 }
@@ -14,6 +38,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
 
+  // Handle preflight request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -23,23 +48,35 @@ export default async function handler(req, res) {
   try {
     console.log('📱 API Request:', { method: req.method, type, id });
 
-    // GET: Ambil transactions
+    const { db } = await connectToDatabase();
+
+    // GET: Ambil data transactions
     if (req.method === 'GET' && type === 'transactions') {
+      const transactions = await db.collection('transactions')
+        .find({})
+        .sort({ tanggalAsli: -1 })
+        .toArray();
+      
+      console.log('📊 Transactions from DB:', transactions.length);
+      
       return res.status(200).json({
         success: true,
-        data: storage.transactions
+        data: transactions
       });
     }
 
     // GET: Ambil notes
     if (req.method === 'GET' && type === 'notes') {
+      const notesDoc = await db.collection('settings').findOne({ key: 'notes' });
+      const notes = notesDoc ? notesDoc.value : "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini.";
+      
       return res.status(200).json({
         success: true,
-        data: storage.notes
+        data: notes
       });
     }
 
-    // POST: Tambah transaction
+    // POST: Tambah transaction baru
     if (req.method === 'POST' && type === 'transaction') {
       let body;
       try {
@@ -47,6 +84,8 @@ export default async function handler(req, res) {
       } catch (e) {
         body = req.body;
       }
+
+      console.log('💾 POST Body:', body);
 
       const transaction = {
         id: generateId(),
@@ -59,7 +98,7 @@ export default async function handler(req, res) {
         createdAt: new Date().toISOString()
       };
       
-      // Validasi
+      // Validasi data
       if (!transaction.nama || !transaction.jenis || !transaction.nominal || !transaction.tanggal) {
         return res.status(400).json({
           success: false,
@@ -67,10 +106,10 @@ export default async function handler(req, res) {
         });
       }
       
-      // Simpan ke memory
-      storage.transactions.unshift(transaction);
+      // Simpan ke MongoDB
+      await db.collection('transactions').insertOne(transaction);
       
-      console.log('✅ Transaction saved:', transaction);
+      console.log('✅ Transaction saved to DB:', transaction);
       
       return res.status(201).json({
         success: true,
@@ -89,7 +128,20 @@ export default async function handler(req, res) {
       }
 
       const notesData = body.notes || body;
-      storage.notes = notesData;
+      
+      if (notesData === undefined || notesData === null) {
+        return res.status(400).json({
+          success: false,
+          message: 'Data catatan tidak valid'
+        });
+      }
+      
+      // Update atau insert notes
+      await db.collection('settings').updateOne(
+        { key: 'notes' },
+        { $set: { value: notesData } },
+        { upsert: true }
+      );
       
       return res.status(200).json({
         success: true,
@@ -106,10 +158,9 @@ export default async function handler(req, res) {
         });
       }
       
-      const initialLength = storage.transactions.length;
-      storage.transactions = storage.transactions.filter(t => t.id !== id);
+      const result = await db.collection('transactions').deleteOne({ id: id });
       
-      if (storage.transactions.length === initialLength) {
+      if (result.deletedCount === 0) {
         return res.status(404).json({
           success: false,
           message: 'Transaksi tidak ditemukan'
@@ -122,16 +173,17 @@ export default async function handler(req, res) {
       });
     }
 
+    // Method tidak didukung
     return res.status(405).json({
       success: false,
       message: 'Method tidak diizinkan'
     });
     
   } catch (error) {
-    console.error('❌ API Error:', error);
+    console.error('❌ MongoDB Error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Server error: ' + error.message
+      message: 'Database error: ' + error.message
     });
   }
 }
