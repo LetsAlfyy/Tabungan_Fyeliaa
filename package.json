@@ -1,5 +1,8 @@
 {
   "name": "fyeliaa-finance",
   "version": "1.0.0",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "mongodb": "^5.0.0"
+  }
 }
