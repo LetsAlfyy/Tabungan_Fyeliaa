@@ -1,4 +1,4 @@
-// data.js - MEMORY STORAGE (NO GOOGLE SHEETS)
+// data.js - MEMORY STORAGE (PASTI JALAN)
 let storage = {
   transactions: [],
   notes: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
