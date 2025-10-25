@@ -1,12 +1,5 @@
-// data.js - SIMPLE VERSION (PASTI JALAN)
-let storage = {
-  transactions: [],
-  notes: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
-};
-
-function generateId() {
-  return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-}
+// data.js - GOOGLE SHEETS VERSION (PERMANEN)
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/a/macros/webmail.uad.ac.id/s/AKfycbwkv87fg4Hb_QlbzAgDpha0HHoE__2pdN_7mYMkAAd0u0eiiGwv5vbig6b8cNDOEkP2Ng/exec'; // GANTI DENGAN URL DEPLOY ANDA
 
 export default async function handler(req, res) {
   // CORS headers
@@ -21,97 +14,36 @@ export default async function handler(req, res) {
   const { type, id } = req.query;
 
   try {
-    console.log('📱 API Request:', { method: req.method, type, id });
+    console.log('📱 Forwarding to Google Sheets:', { method: req.method, type, id });
 
-    // GET TRANSACTIONS
-    if (req.method === 'GET' && type === 'transactions') {
-      return res.status(200).json({
-        success: true,
-        data: storage.transactions
-      });
-    }
+    // Build URL untuk Google Apps Script
+    let url = `${GOOGLE_SCRIPT_URL}?type=${type}`;
+    if (id) url += `&id=${encodeURIComponent(id)}`;
 
-    // GET NOTES
-    if (req.method === 'GET' && type === 'notes') {
-      return res.status(200).json({
-        success: true,
-        data: storage.notes
-      });
-    }
-
-    // ADD TRANSACTION
-    if (req.method === 'POST' && type === 'transaction') {
-      let body;
-      try {
-        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      } catch (e) {
-        body = req.body;
+    const options = {
+      method: req.method,
+      headers: {
+        'Content-Type': 'application/json',
       }
+    };
 
-      const transaction = {
-        id: generateId(),
-        tanggal: body.tanggal,
-        tanggalAsli: body.tanggalAsli,
-        nama: body.nama,
-        jenis: body.jenis,
-        nominal: parseInt(body.nominal),
-        keterangan: body.keterangan || '',
-        createdAt: new Date().toISOString()
-      };
-
-      if (!transaction.nama || !transaction.jenis || !transaction.nominal || !transaction.tanggal) {
-        return res.status(400).json({
-          success: false,
-          message: 'Data tidak lengkap'
-        });
-      }
-
-      storage.transactions.unshift(transaction);
-      
-      return res.status(201).json({
-        success: true,
-        data: transaction,
-        message: 'Transaksi berhasil disimpan!'
-      });
+    // Tambah body untuk POST requests
+    if (req.method === 'POST') {
+      options.body = JSON.stringify(req.body);
     }
 
-    // SAVE NOTES
-    if (req.method === 'POST' && type === 'notes') {
-      let body;
-      try {
-        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      } catch (e) {
-        body = req.body;
-      }
-
-      storage.notes = body.notes || body;
-
-      return res.status(200).json({
-        success: true,
-        message: 'Catatan berhasil disimpan!'
-      });
-    }
-
-    // DELETE TRANSACTION
-    if (req.method === 'DELETE' && type === 'transaction') {
-      storage.transactions = storage.transactions.filter(t => t.id !== id);
-
-      return res.status(200).json({
-        success: true,
-        message: 'Transaksi berhasil dihapus!'
-      });
-    }
-
-    return res.status(405).json({
-      success: false,
-      message: 'Method tidak didukung'
-    });
-
+    const response = await fetch(url, options);
+    const result = await response.json();
+    
+    console.log('✅ Google Sheets response:', { status: response.status, success: result.success });
+    
+    res.status(response.status).json(result);
+    
   } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({
+    console.error('❌ Google Sheets proxy error:', error);
+    res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: 'Koneksi ke database gagal: ' + error.message
     });
   }
 }
