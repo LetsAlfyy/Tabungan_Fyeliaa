@@ -2,29 +2,7 @@
 
 // Simpan data di memory (untuk demo)
 let storage = {
-  transactions: [
-    // Contoh data awal
-    {
-      id: "demo_1",
-      tanggal: "01/01/2025",
-      tanggalAsli: "2025-01-01",
-      nama: "Alfye",
-      jenis: "masuk",
-      nominal: 1000000,
-      keterangan: "Gaji bulanan",
-      createdAt: "2025-01-01T00:00:00.000Z"
-    },
-    {
-      id: "demo_2", 
-      tanggal: "02/01/2025",
-      tanggalAsli: "2025-01-02",
-      nama: "Aulia",
-      jenis: "keluar",
-      nominal: 250000,
-      keterangan: "Bayar listrik",
-      createdAt: "2025-01-02T00:00:00.000Z"
-    }
-  ],
+  transactions: [], // KOSONGKAN data awal
   notes: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
 };
 
@@ -51,8 +29,7 @@ export default async function handler(req, res) {
     console.log('API Request:', { 
       method: req.method, 
       type, 
-      id, 
-      query: req.query 
+      id 
     });
 
     // GET: Ambil data
@@ -88,6 +65,8 @@ export default async function handler(req, res) {
         body = req.body;
       }
 
+      console.log('POST Body:', body);
+
       if (type === 'transaction') {
         const transaction = {
           id: generateId(),
@@ -111,6 +90,7 @@ export default async function handler(req, res) {
         storage.transactions.push(transaction);
         
         console.log('Transaction saved:', transaction);
+        console.log('Total transactions now:', storage.transactions.length);
         
         return res.status(201).json({
           success: true,
@@ -176,4 +156,4 @@ export default async function handler(req, res) {
       message: 'Terjadi kesalahan server: ' + error.message
     });
   }
-}
+        }
