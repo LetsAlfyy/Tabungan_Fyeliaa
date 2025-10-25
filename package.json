@@ -2,9 +2,6 @@
   "name": "fyeliaa-finance",
   "version": "1.0.0",
   "type": "module",
-  "dependencies": {
-    "mongodb": "^5.0.0"
-  },
   "scripts": {
     "dev": "vercel dev",
     "build": "vercel build"
