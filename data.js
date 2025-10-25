@@ -2,7 +2,7 @@
 
 // Simpan data di memory (untuk demo)
 let storage = {
-  transactions: [], // KOSONGKAN data awal
+  transactions: [],
   notes: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
 };
 
@@ -13,10 +13,12 @@ function generateId() {
 
 // Fungsi utama handler API
 export default async function handler(req, res) {
-  // Set CORS headers - izinkan akses dari semua domain
+  // Set CORS headers lengkap untuk mobile
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Max-Age', '86400');
 
   // Handle preflight request untuk CORS
   if (req.method === 'OPTIONS') {
@@ -26,18 +28,21 @@ export default async function handler(req, res) {
   const { type, id } = req.query;
 
   try {
-    console.log('API Request:', { 
+    console.log('📱 API Request:', { 
       method: req.method, 
       type, 
-      id 
+      id,
+      origin: req.headers.origin
     });
 
     // GET: Ambil data
     if (req.method === 'GET') {
       if (type === 'transactions') {
+        console.log('📊 Mengirim transactions:', storage.transactions.length);
         return res.status(200).json({
           success: true,
-          data: storage.transactions
+          data: storage.transactions,
+          count: storage.transactions.length
         });
       } else if (type === 'notes') {
         return res.status(200).json({
@@ -65,7 +70,7 @@ export default async function handler(req, res) {
         body = req.body;
       }
 
-      console.log('POST Body:', body);
+      console.log('💾 POST Body:', body);
 
       if (type === 'transaction') {
         const transaction = {
@@ -89,8 +94,8 @@ export default async function handler(req, res) {
         
         storage.transactions.push(transaction);
         
-        console.log('Transaction saved:', transaction);
-        console.log('Total transactions now:', storage.transactions.length);
+        console.log('✅ Transaction saved:', transaction);
+        console.log('📈 Total transactions now:', storage.transactions.length);
         
         return res.status(201).json({
           success: true,
@@ -150,10 +155,10 @@ export default async function handler(req, res) {
     });
     
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('❌ API Error:', error);
     return res.status(500).json({
       success: false,
       message: 'Terjadi kesalahan server: ' + error.message
     });
   }
-        }
+}
