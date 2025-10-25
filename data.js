@@ -1,5 +1,12 @@
-// data.js - SIMPLE VERSION DULU
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyj4LlPQDxR0omsQwPFc8kYKRBm87d60JknIMaMeS981jG1mM4MgVy2jlT2cPW2IQIN/exec'; // GANTI DENGAN URL ANDA
+// data.js - MEMORY STORAGE (NO GOOGLE SHEETS)
+let storage = {
+  transactions: [],
+  notes: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
+};
+
+function generateId() {
+  return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
 
 export default async function handler(req, res) {
   // CORS headers
@@ -14,48 +21,118 @@ export default async function handler(req, res) {
   const { type, id } = req.query;
 
   try {
-    console.log('📱 Request:', { method: req.method, type, id });
+    console.log('📱 API Request:', { method: req.method, type, id });
 
-    // Test URL Google Script
-    let url = `${GOOGLE_SCRIPT_URL}?type=${type}`;
-    if (id) url += `&id=${id}`;
-
-    console.log('🔗 Calling:', url);
-
-    const response = await fetch(url, {
-      method: req.method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: req.method === 'POST' ? JSON.stringify(req.body) : undefined
-    });
-
-    const result = await response.json();
-    console.log('✅ Response:', result);
-    
-    res.status(response.status).json(result);
-    
-  } catch (error) {
-    console.error('❌ Error:', error);
-    
-    // FALLBACK: Return empty data jika error
+    // GET TRANSACTIONS
     if (req.method === 'GET' && type === 'transactions') {
       return res.status(200).json({
         success: true,
-        data: []
+        data: storage.transactions
       });
     }
-    
+
+    // GET NOTES
     if (req.method === 'GET' && type === 'notes') {
       return res.status(200).json({
         success: true,
-        data: "Selamat datang di Fyeliaa! 💰"
+        data: storage.notes
       });
     }
-    
-    res.status(500).json({
+
+    // ADD TRANSACTION
+    if (req.method === 'POST' && type === 'transaction') {
+      let body;
+      try {
+        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      } catch (e) {
+        body = req.body;
+      }
+
+      console.log('💾 Received transaction data:', body);
+
+      const transaction = {
+        id: generateId(),
+        tanggal: body.tanggal,
+        tanggalAsli: body.tanggalAsli,
+        nama: body.nama,
+        jenis: body.jenis,
+        nominal: parseInt(body.nominal),
+        keterangan: body.keterangan || '',
+        createdAt: new Date().toISOString()
+      };
+
+      // Validasi
+      if (!transaction.nama || !transaction.jenis || !transaction.nominal || !transaction.tanggal) {
+        return res.status(400).json({
+          success: false,
+          message: 'Data tidak lengkap!'
+        });
+      }
+
+      // Simpan ke memory
+      storage.transactions.unshift(transaction);
+      
+      console.log('✅ Transaction saved! ID:', transaction.id);
+      console.log('📊 Total transactions:', storage.transactions.length);
+
+      return res.status(201).json({
+        success: true,
+        data: transaction,
+        message: 'Transaksi berhasil disimpan! 🎉'
+      });
+    }
+
+    // SAVE NOTES
+    if (req.method === 'POST' && type === 'notes') {
+      let body;
+      try {
+        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      } catch (e) {
+        body = req.body;
+      }
+
+      const notesData = body.notes || body;
+      storage.notes = notesData;
+
+      console.log('📝 Notes saved:', notesData);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Catatan berhasil disimpan! 📝'
+      });
+    }
+
+    // DELETE TRANSACTION
+    if (req.method === 'DELETE' && type === 'transaction') {
+      const initialLength = storage.transactions.length;
+      storage.transactions = storage.transactions.filter(t => t.id !== id);
+
+      if (storage.transactions.length === initialLength) {
+        return res.status(404).json({
+          success: false,
+          message: 'Transaksi tidak ditemukan!'
+        });
+      }
+
+      console.log('🗑️ Transaction deleted:', id);
+      console.log('📊 Total transactions:', storage.transactions.length);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Transaksi berhasil dihapus! 🗑️'
+      });
+    }
+
+    return res.status(405).json({
       success: false,
-      message: 'Koneksi gagal: ' + error.message
+      message: 'Method tidak didukung!'
+    });
+
+  } catch (error) {
+    console.error('❌ Server Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Terjadi kesalahan server'
     });
   }
 }
