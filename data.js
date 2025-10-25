@@ -1,5 +1,5 @@
-// data.js - GOOGLE SHEETS VERSION
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzbkvEBnYpoM_yFtNgFcTlLaFiRk7UAsI2Qsy3DLZMEfPx2pr_Q0qVjM4jvwvihKRDkw/exec'; // GANTI DENGAN URL DEPLOY ANDA
+// data.js - GOOGLE SHEETS VERSION (FIXED)
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzbkvEBnYpoM_yFtNgFcTlLaFiRk7UAsI2Qsy3DLZMEfPx2pr_Q0qVjM4jvwvihKRDkw/exec';
 
 export default async function handler(req, res) {
   // CORS headers
@@ -20,6 +20,8 @@ export default async function handler(req, res) {
     let url = `${GOOGLE_SCRIPT_URL}?type=${type}`;
     if (id) url += `&id=${encodeURIComponent(id)}`;
 
+    console.log('🔗 Calling:', url);
+
     const options = {
       method: req.method,
       headers: {
@@ -32,20 +34,30 @@ export default async function handler(req, res) {
       options.body = JSON.stringify(req.body);
     }
 
-    console.log('🔗 Calling Google Script:', url);
-    
+    // Timeout after 10 seconds
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    options.signal = controller.signal;
+
     const response = await fetch(url, options);
+    clearTimeout(timeoutId);
+
     const result = await response.json();
     
-    console.log('✅ Google Sheets response:', result);
+    console.log('✅ Google Sheets response:', { 
+      status: response.status, 
+      success: result.success,
+      dataLength: result.data ? result.data.length : 0
+    });
     
     res.status(response.status).json(result);
     
   } catch (error) {
-    console.error('❌ Google Sheets error:', error);
+    console.error('❌ Google Sheets error:', error.message);
     
-    // Fallback responses
+    // Fallback responses untuk GET requests
     if (req.method === 'GET' && type === 'transactions') {
+      console.log('🔄 Using fallback for transactions');
       return res.status(200).json({
         success: true,
         data: []
@@ -53,15 +65,17 @@ export default async function handler(req, res) {
     }
     
     if (req.method === 'GET' && type === 'notes') {
+      console.log('🔄 Using fallback for notes');
       return res.status(200).json({
         success: true,
-        data: "Selamat datang di Fyeliaa! 💰"
+        data: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
       });
     }
     
+    // Untuk POST requests, return error yang jelas
     res.status(500).json({
       success: false,
-      message: 'Koneksi ke Google Sheets gagal: ' + error.message
+      message: 'Gagal terhubung ke server. Coba lagi dalam beberapa saat.'
     });
   }
 }
