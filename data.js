@@ -1,20 +1,29 @@
-// data.js - MONGODB VERSION (PERMANEN)
+// data.js - MONGODB dengan ERROR HANDLING
 import { MongoClient } from 'mongodb';
 
 // GANTI DENGAN CONNECTION STRING ANDA
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://fyeliaa_user:Fyeliaa123@cluster0.abc123.mongodb.net/fyeliaa?retryWrites=true&w=majority";
 
 let cachedDb = null;
+let connectionError = null;
 
 async function connectToDatabase() {
   if (cachedDb) {
     return cachedDb;
   }
 
+  if (connectionError) {
+    throw connectionError;
+  }
+
   console.log('🔄 Connecting to MongoDB...');
   
   try {
-    const client = new MongoClient(MONGODB_URI);
+    const client = new MongoClient(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
+    });
+    
     await client.connect();
     const db = client.db();
     cachedDb = db;
@@ -23,6 +32,7 @@ async function connectToDatabase() {
     return db;
   } catch (error) {
     console.error('❌ MongoDB Connection Failed:', error.message);
+    connectionError = error;
     throw error;
   }
 }
@@ -30,6 +40,12 @@ async function connectToDatabase() {
 function generateId() {
   return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 }
+
+// Fallback data jika MongoDB down
+const fallbackData = {
+  transactions: [],
+  notes: "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini."
+};
 
 export default async function handler(req, res) {
   // CORS headers
@@ -46,11 +62,10 @@ export default async function handler(req, res) {
   try {
     console.log('📱 API Request:', { method: req.method, type, id });
 
-    const db = await connectToDatabase();
-
-    // GET TRANSACTIONS
+    // GET TRANSACTIONS - dengan fallback
     if (req.method === 'GET' && type === 'transactions') {
       try {
+        const db = await connectToDatabase();
         const transactions = await db.collection('transactions')
           .find({})
           .sort({ tanggalAsli: -1 })
@@ -60,31 +75,37 @@ export default async function handler(req, res) {
         
         return res.status(200).json({
           success: true,
-          data: transactions
+          data: transactions,
+          source: 'mongodb'
         });
       } catch (error) {
-        console.error('❌ Get transactions error:', error);
+        console.log('⚠️ Using fallback data for transactions');
         return res.status(200).json({
           success: true,
-          data: []
+          data: fallbackData.transactions,
+          source: 'fallback'
         });
       }
     }
 
-    // GET NOTES
+    // GET NOTES - dengan fallback
     if (req.method === 'GET' && type === 'notes') {
       try {
+        const db = await connectToDatabase();
         const notesDoc = await db.collection('settings').findOne({ key: 'notes' });
-        const notes = notesDoc ? notesDoc.value : "Selamat datang di Fyeliaa! 💰\nCatat semua transaksi keuangan Alfye & Aulia di sini.";
+        const notes = notesDoc ? notesDoc.value : fallbackData.notes;
         
         return res.status(200).json({
           success: true,
-          data: notes
+          data: notes,
+          source: 'mongodb'
         });
       } catch (error) {
+        console.log('⚠️ Using fallback data for notes');
         return res.status(200).json({
           success: true,
-          data: "Selamat datang di Fyeliaa! 💰"
+          data: fallbackData.notes,
+          source: 'fallback'
         });
       }
     }
@@ -98,7 +119,7 @@ export default async function handler(req, res) {
         body = req.body;
       }
 
-      console.log('💾 Saving transaction to MongoDB:', body);
+      console.log('💾 Saving transaction:', body);
 
       const transaction = {
         id: generateId(),
@@ -120,20 +141,31 @@ export default async function handler(req, res) {
       }
 
       try {
+        const db = await connectToDatabase();
         await db.collection('transactions').insertOne(transaction);
         
         console.log('✅ Transaction saved to MongoDB! ID:', transaction.id);
         
+        // Juga simpan ke fallback
+        fallbackData.transactions.unshift(transaction);
+        
         return res.status(201).json({
           success: true,
           data: transaction,
-          message: 'Transaksi berhasil disimpan! 🎉'
+          message: 'Transaksi berhasil disimpan! 🎉',
+          source: 'mongodb'
         });
       } catch (error) {
-        console.error('❌ Save to MongoDB failed:', error);
-        return res.status(500).json({
-          success: false,
-          message: 'Gagal menyimpan ke database'
+        console.error('❌ MongoDB save failed, using fallback');
+        
+        // Simpan ke fallback data
+        fallbackData.transactions.unshift(transaction);
+        
+        return res.status(201).json({
+          success: true,
+          data: transaction,
+          message: 'Transaksi disimpan (offline mode) 📱',
+          source: 'fallback'
         });
       }
     }
@@ -150,6 +182,7 @@ export default async function handler(req, res) {
       const notesData = body.notes || body;
 
       try {
+        const db = await connectToDatabase();
         await db.collection('settings').updateOne(
           { key: 'notes' },
           { $set: { value: notesData } },
@@ -157,16 +190,25 @@ export default async function handler(req, res) {
         );
 
         console.log('📝 Notes saved to MongoDB');
+        
+        // Juga simpan ke fallback
+        fallbackData.notes = notesData;
 
         return res.status(200).json({
           success: true,
-          message: 'Catatan berhasil disimpan! 📝'
+          message: 'Catatan berhasil disimpan! 📝',
+          source: 'mongodb'
         });
       } catch (error) {
-        console.error('❌ Save notes failed:', error);
-        return res.status(500).json({
-          success: false,
-          message: 'Gagal menyimpan catatan'
+        console.error('❌ MongoDB notes save failed, using fallback');
+        
+        // Simpan ke fallback
+        fallbackData.notes = notesData;
+
+        return res.status(200).json({
+          success: true,
+          message: 'Catatan disimpan (offline mode) 📱',
+          source: 'fallback'
         });
       }
     }
@@ -181,9 +223,13 @@ export default async function handler(req, res) {
       }
 
       try {
+        const db = await connectToDatabase();
         const result = await db.collection('transactions').deleteOne({ id: id });
         
         if (result.deletedCount === 0) {
+          // Coba hapus dari fallback juga
+          fallbackData.transactions = fallbackData.transactions.filter(t => t.id !== id);
+          
           return res.status(404).json({
             success: false,
             message: 'Transaksi tidak ditemukan!'
@@ -191,16 +237,33 @@ export default async function handler(req, res) {
         }
 
         console.log('🗑️ Transaction deleted from MongoDB:', id);
+        
+        // Juga hapus dari fallback
+        fallbackData.transactions = fallbackData.transactions.filter(t => t.id !== id);
 
         return res.status(200).json({
           success: true,
-          message: 'Transaksi berhasil dihapus! 🗑️'
+          message: 'Transaksi berhasil dihapus! 🗑️',
+          source: 'mongodb'
         });
       } catch (error) {
-        console.error('❌ Delete transaction failed:', error);
-        return res.status(500).json({
-          success: false,
-          message: 'Gagal menghapus transaksi'
+        console.error('❌ MongoDB delete failed, using fallback');
+        
+        // Hapus dari fallback
+        const initialLength = fallbackData.transactions.length;
+        fallbackData.transactions = fallbackData.transactions.filter(t => t.id !== id);
+        
+        if (fallbackData.transactions.length === initialLength) {
+          return res.status(404).json({
+            success: false,
+            message: 'Transaksi tidak ditemukan!'
+          });
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: 'Transaksi dihapus (offline mode) 📱',
+          source: 'fallback'
         });
       }
     }
@@ -211,10 +274,10 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ MongoDB Error:', error);
+    console.error('❌ Server Error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Database error: ' + error.message
+      message: 'Terjadi kesalahan server'
     });
   }
 }
